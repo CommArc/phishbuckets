@@ -5,7 +5,6 @@ _Keep the core concept, but make it easier to use over
  providing a web interface_
 
 
-
 ## v0.1 (current production)
 It works, but is not pretty
 

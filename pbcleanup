@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
     pbcleanup - Given a base group, it deletes all
-        the sub-groups, and the campaigns associated. This
-        is done simply by name matching - so assumes that
+        the sub-groups, and the campaigns associated.
+
+        This is done simply by name matching - so assumes that
         these have been added in a regular way by our scripts.
 
         But the 'spear' groups like ACME0816-spear-1 have been added
-        manually so ar enot cleaned up, unless secified (as in
+        manually so are not cleaned up, unless secified (as in
         'pbcleanup ACME0816-spear' - which will delete all gropus and
         campaigns with that string in their name).
 """

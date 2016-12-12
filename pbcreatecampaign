@@ -2,7 +2,7 @@
 #
 '''This will be called by the "at" jobs setup by the 'create-plan' script
      - creates and runs the 'gophish' campigns *immediatly*
-     - trusts 'pbcreateplan' to have checked stuff, so does no more checking...
+     - trusts 'pbcreateplan' to have checked stuff - so does no more checking...
 '''
 
 def main():

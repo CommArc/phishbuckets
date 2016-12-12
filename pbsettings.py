@@ -18,8 +18,8 @@ try:
 except:
     sys.exit(
     "\n[Error]: 'GOPHISH_KEY' not found.\n"
-    "\n   The script expects the API key to be stored in "
-    "\n   the file: ~/.phishbuckets/config "
+    "\n   The script expects the API key to be stored"
+    "\n   in the file: ~/.phishbuckets/config "
     "\n"
     )
 

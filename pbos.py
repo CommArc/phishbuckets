@@ -1,5 +1,5 @@
 #
-#   pbos.py - functions calling the Linux OS and utilities
+#   pbos.py - functions calling the Linux OS, and utilities
 #
 
 

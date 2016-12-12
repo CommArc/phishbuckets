@@ -4,6 +4,7 @@
 This process details how to perform a targeted phishing campaign for a client or
 department. The aim is both to measure how cautious staff are, and to raise 
 their awareness of what phishing attacks can look like.
+
 The process currently contains two types of attack:
 * General hoax emails, targeting most staff members with 1-2 generic types of 
 messages each

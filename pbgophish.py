@@ -29,7 +29,7 @@ def check_for_subgroups(base_group):
             print("[Error] The email group '", targetgroup[sub], "' not found")
             sys.exit("[Error] All the subgroups must be setup first\n")
 
-    print("[OK] Subgroups have been setup on the server...")
+    print("[OK] Subgroups have been setup on the server")
 
 
 def check_group(base_group):

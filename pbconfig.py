@@ -1,5 +1,5 @@
 #
-#   pbconfig - functions for reading configuration settings
+#   pbconfig - functions for reading configuration settings.
 #
 
 

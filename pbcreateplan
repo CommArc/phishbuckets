@@ -3,7 +3,7 @@
 pbcreateplan <usergroup> <start-date>
 
 TODO:
-        - alter 'schedule_collect_results' to "12 hours after the last phish" so
+        - alter 'schedule_collect_results' to "12 hours after the last phish", so
           that we can have schedules other than a fortnight.
 """
 

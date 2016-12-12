@@ -7,6 +7,7 @@ app = Flask(__name__)
 def hello():
     return render_template('home.html')
 
+
 @app.route("/debug")
 def debugg():
     return "DEBUGGER!!"
