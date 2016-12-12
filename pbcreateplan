@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+"""
+pbcreateplan <usergroup> <start-date>
+
+TODO:
+        - alter 'schedule_collect_results' to "12 hours after the last phish" so
+          that we can have schedules other than a fortnight.
+"""
+
+import os
+import sys
+import time
+import datetime
+from pbcalc import check_date
+from pbconfig import (
+    get_mailshot_time, get_phishes
+    )
+from pbgophish import (
+    check_for_subgroups, check_group, check_templates, check_smtp_profiles, 
+    check_scare_page, create_sub
+    )
+from pbos import show_schedule, schedule_mailshots
+from pbsettings import URL, GOPHISH_KEY
+
+def main():
+    if len(sys.argv) < 5:
+        sys.exit(
+            "\n Usage: create-plan <group> <start-date> <phish_set> <sched_name>"
+            "\n "
+            "\n e.g     create-plan ACME0816 15/5/2017 SECOND blaster"
+            "\n         create-plan ACME0816 now SECOND"
+            "\n         (if we chose 'now', we don't need a schedule)"
+            "\n "
+            )
+
+
+    #   Commandline params
+    base_group = sys.argv[1]
+    start_date = sys.argv[2]
+    phish_set = sys.argv[3]
+    sched_name = sys.argv[4]
+
+
+    #   Check that everything is OK
+    start = check_date(start_date)
+    base_group_object = check_group(base_group)
+    phishes = get_phishes(phish_set)
+    schedule = get_mailshot_time(sched_name)
+    check_templates(phishes)
+    check_smtp_profiles(phishes)
+    check_scare_page(base_group)
+
+    #   Now start working...
+    sub_group = create_subgroup_structure(base_group)
+    populate_subgroups(base_group_object, sub_group)
+    for x in range(0, 10):
+        create_sub(sub_group[x]["name"], sub_group[x]["targets"])
+        time.sleep(1)  # because it has been locking sometimes...
+
+    #   And check that all went OK
+    check_for_subgroups(base_group)
+
+    #   Schedule the mailshots and results collection, with
+    #   the option of picking any of several sets of schedules
+    #   or 'now' to do them all immediatly
+    schedule_mailshots(base_group, start_date, phish_set, sched_name)
+    if start_date != "now":
+        schedule_collect_results(start_date, base_group)
+
+    #   Display the queued up jobs
+    show_schedule(base_group)
+
+# ------- supporting functions are defined below -------------------------
+
+
+
+def create_subgroup_structure(base_group):
+    sub_group = []
+    for x in range(0, 10):
+        sub_name = base_group + "-" + str(x)
+        sub_group.append({"name": sub_name, "targets": []})
+    return sub_group
+
+
+
+def populate_subgroups(base_group_object, sub_group):
+    """Split the email addresses from the base group into the ten subgroups."""
+    target_user_index = 0
+    had_to_loop = False
+
+    num_of_targets = len(base_group_object["targets"])
+
+    while had_to_loop == False:
+        for x in range(0, 10):	# for each of the ten sub-groups
+            target = base_group_object["targets"][target_user_index]
+            sub_group[x]["targets"].append(target)
+            target_user_index += 1
+            # if we have too few users, we loop around to the top
+            if target_user_index > num_of_targets-1:
+                had_to_loop = True
+                target_user_index = 0
+
+
+
+def schedule_collect_results(start_date, base_group):
+    """Schedule a job to collect the results, and send them through..."""
+
+    #   We collect the results at 4:30pm on the Friday,
+    #   11 days after the starting Monday.
+    #
+    mailshot_date = datetime.datetime.strptime(start_date, '%d/%m/%Y')
+    mailshot_date += datetime.timedelta(days=11)
+    shot_time = "16:30"
+    cmd = 'echo /usr/local/bin/pbcollectresults' + \
+        ' "\'' + \
+        base_group + \
+        '\'" "\'' + \
+        'snori74@example.com' +\
+        '\'" ' +\
+        '| at   -v  ' + \
+        shot_time  + \
+        ' ' +\
+        mailshot_date.strftime('%m/%d/%Y')
+
+    #   create the job...
+    retvalue = 0
+    retvalue = os.system(cmd)
+    if retvalue == 0:
+        print("[OK] Results collection scheduled")
+    else:
+        print("[Error]: Creating the results collection scheduled task")
+
+
+
+if __name__ == '__main__':
+    sys.exit(main())

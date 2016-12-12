@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""
+pbkill <usergroup> 
+
+    Kill only the queued 'at' jobs related to one basegroup
+
+    e.g pbkill ACME0816
+
+TODO:
+    - fix some repeating wierdness
+
+"""
+import re
+import sys
+import subprocess
+
+def main():
+    if len(sys.argv) < 2:
+        sys.exit(
+        "\n Usage: pbkill <basegroup> "
+        "\n "
+        "\n e.g     pbkill ACME0816 (which will kill all matching 'at' tasks) "
+        "\n "
+        )
+
+    base_group = sys.argv[1]
+    jobs = get_at_jobs()
+    found = False
+
+    for job in jobs:
+        # print("Checking task: ", job, "...")
+        if base_group in group_name(job):
+            found += 1
+            kill_job(job)
+            print("[OK] Killed job ", job, "(" , group_name(job), ")")
+    if found:
+        print("\nKilled ", found, "tasks")
+    else:
+        print("\nNo matching tasks found")
+
+# ------- supporting functions are defined below -------------------------
+
+def get_at_jobs():
+    cmd = "atq | cut -f1 "
+    output = subprocess.check_output(cmd, shell=True)
+    list_of_at_jobs = re.split("\n", (str(output, 'utf-8')))
+    del list_of_at_jobs[-1]
+    return list_of_at_jobs
+
+
+def group_name(job):
+    cmd = 'at -c ' + job + ' | tail -2| head -1| cut -f 2 -d" "'
+    base_name = str(subprocess.check_output(cmd, shell=True), 'utf-8')
+    return base_name
+
+
+def kill_job(job):
+    cmd = 'atrm ' + job
+    output = subprocess.check_output(cmd, shell=True)
+    return
+
+
+if __name__ == '__main__':
+    sys.exit(main())

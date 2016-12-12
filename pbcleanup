@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""
+    pbcleanup - Given a base group, it deletes all
+        the sub-groups, and the campaigns associated. This
+        is done simply by name matching - so assumes that
+        these have been added in a regular way by our scripts.
+
+        But the 'spear' groups like ACME0816-spear-1 have been added
+        manually so ar enot cleaned up, unless secified (as in
+        'pbcleanup ACME0816-spear' - which will delete all gropus and
+        campaigns with that string in their name).
+"""
+
+#   TODO
+#   - should not crash if given a bogus base_name
+#
+
+import sys
+import requests
+from pbsettings import URL, GOPHISH_KEY
+from pbgophish import delete_group, delete_camp
+
+def main():
+    if len(sys.argv) < 2:
+        sys.exit(
+        "\n Usage: pbcleanup  <usergroup> \n"
+        "\n e.g pbcleanup MOFF16  \n"
+        )
+    base_group = sys.argv[1]
+    target_group = sys.argv[1]
+
+
+    # get list of groups from the server
+    #
+    full_url = URL + "/api/groups"
+    resp = requests.get(full_url, params=GOPHISH_KEY)
+    groups = resp.json()
+
+    # is the target group among them?
+    #
+    found = False
+    for group in groups:
+        if group["name"] == target_group:
+            print("Found target group: ", target_group)
+            found = True
+    if found == False:
+        exit_msg = "[Error] target group: '" + target_group + "' not found."
+        sys.exit(exit_msg)
+
+    # ...and delete 'em - 
+    # (but we never zap the manually setup 'spear' groups
+    #
+    deleted =0
+    for group in groups:
+        if (target_group in group["name"]) and \
+          (target_group != group["name"]) and \
+          ( "-spear-" not in group["name"]):
+            delete_group(group["id"], group["name"])
+            deleted += 1
+    if deleted > 0:
+        print("[OK] Deleted ", deleted, " subgroups")
+    else:
+        print("[Error] No sub-groups found to delete")
+
+    # Campaigns are simpler; delete all with 'target_group' in their name...
+    #
+    full_url = URL + "/api/campaigns"
+    resp = requests.get(full_url, params=GOPHISH_KEY)
+    campaigns = resp.json()
+
+    deleted =0
+    for camp in campaigns:
+        if (target_group in camp["name"]):
+            delete_camp(camp["id"], camp["name"])
+            deleted += 1
+    if deleted > 0:
+        print("[OK] Deleted ", deleted, " campaigns")
+    else:
+        print("[Error] No campaigns found to delete")
+
+    # We won't try to automate this for now...
+    # 
+    print("\nYou may also need to manually kill any queued tasks with: 'pbkill ",
+          target_group, "'",sep = "")
+
+# ------------ end of main() ----------------------------
+
+
+if __name__ == '__main__':
+    sys.exit(main())
