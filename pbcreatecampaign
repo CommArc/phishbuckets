@@ -5,15 +5,17 @@
      - trusts 'pbcreateplan' to have checked stuff - so does no more checking...
 '''
 
+import sys
+
 def main():
 
-    import sys
     import json
     import requests
     import smtplib
     from pbsettings import GOPHISH_KEY, URL, PHISH_MASTER, EMAIL_FROM
+    from pbgophish import create_camp
 
-if len(sys.argv) < 3:
+    if len(sys.argv) < 3:
         sys.exit(
         "\n Usage: pbcreatecampaign <name> <template> <page> <url> <smtp> <groups>"
         "\n "
@@ -29,12 +31,10 @@ if len(sys.argv) < 3:
     n_data = json.dumps(o_data)
 
     #   Now create the new campaign
-    print("\nNow POSTing...")
-    headers = {'content-type': 'application/json'}
-    resp = requests.post(url, n_data, params=key, headers=headers)
-    if (resp.status_code == 201):
-        print("[OK] Added, and all went fine")
+    create_camp(n_data)
 
+    if True:         # we never get here is the createion failed...
+        print("[OK] Added, and all went fine")
         #   and send and email alert...
         msg = MIMEMultipart()
         fromaddr = EMAIL_FROM

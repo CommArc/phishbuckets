@@ -80,11 +80,26 @@ def delete_group(grp_id, grp_name):
         print("\nEncoding: ")
         print(resp.encoding)
         sys.exit()
-    return
+
+
+def create_camp(n_data):
+    """Create a new campaign."""
+
+    from pbsettings import GOPHISH_KEY, URL
+    import requests
+    import sys
+
+    headers = {'content-type': 'application/json'}
+    full_url = URL + "/api/campaigns/"
+    resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers)
+    if (resp.status_code == 201):
+        print("[OK] Added, and all went fine")
+    else:
+        sys.exit("Bugger! campaign creation failed")
 
 
 def delete_camp(id, name):
-    """Delete an group, by it's id."""
+    """Delete a campaign, by it's id."""
 
     from pbsettings import GOPHISH_KEY, URL
     import requests
