@@ -7,20 +7,21 @@ TODO:
           so that we can have schedules other than a fortnight.
 """
 
+import datetime
 import os
 import sys
 import time
-import datetime
+
 from pbcalc import check_date
 from pbconfig import (
     get_mailshot_time, get_phishes
-    )
+)
 from pbgophish import (
-    check_for_subgroups, check_group, check_templates, check_smtp_profiles, 
+    check_for_subgroups, check_group, check_templates, check_smtp_profiles,
     check_scare_page, create_sub
-    )
+)
 from pbos import show_schedule, schedule_mailshots
-from pbsettings import URL, GOPHISH_KEY
+
 
 def main():
     if len(sys.argv) < 5:
@@ -31,15 +32,13 @@ def main():
             "\n         create-plan ACME0816 now SECOND"
             "\n         (if we chose 'now', we don't need a schedule)"
             "\n "
-            )
+        )
 
-
-    #   Commandline params
+    # Commandline params
     base_group = sys.argv[1]
     start_date = sys.argv[2]
     phish_set = sys.argv[3]
     sched_name = sys.argv[4]
-
 
     #   Check that everything is OK
     start = check_date(start_date)
@@ -57,7 +56,7 @@ def main():
         create_sub(sub_group[x]["name"], sub_group[x]["targets"])
         time.sleep(1)  # because it has been locking sometimes...
 
-    #   And check that all went OK
+    # And check that all went OK
     check_for_subgroups(base_group)
 
     #   Schedule the mailshots and results collection, with
@@ -67,8 +66,9 @@ def main():
     if start_date != "now":
         schedule_collect_results(start_date, base_group)
 
-    #   Display the queued up jobs
+    # Display the queued up jobs
     show_schedule(base_group)
+
 
 # ------- supporting functions are defined below -------------------------
 
@@ -82,7 +82,6 @@ def create_subgroup_structure(base_group):
     return sub_group
 
 
-
 def populate_subgroups(base_group_object, sub_group):
     """Split the email addresses from the base group into the ten subgroups."""
     target_user_index = 0
@@ -90,16 +89,15 @@ def populate_subgroups(base_group_object, sub_group):
 
     num_of_targets = len(base_group_object["targets"])
 
-    while had_to_loop == False:
-        for x in range(0, 10):	# for each of the ten sub-groups
+    while not had_to_loop:
+        for x in range(0, 10):  # for each of the ten sub-groups
             target = base_group_object["targets"][target_user_index]
             sub_group[x]["targets"].append(target)
             target_user_index += 1
             # if we have too few users, we loop around to the top
-            if target_user_index > num_of_targets-1:
+            if target_user_index > num_of_targets - 1:
                 had_to_loop = True
                 target_user_index = 0
-
 
 
 def schedule_collect_results(start_date, base_group):
@@ -112,15 +110,15 @@ def schedule_collect_results(start_date, base_group):
     mailshot_date += datetime.timedelta(days=11)
     shot_time = "16:30"
     cmd = 'echo /usr/local/bin/pbcollectresults' + \
-        ' "\'' + \
-        base_group + \
-        '\'" "\'' + \
-        'snori74@example.com' +\
-        '\'" ' +\
-        '| at   -v  ' + \
-        shot_time  + \
-        ' ' +\
-        mailshot_date.strftime('%m/%d/%Y')
+          ' "\'' + \
+          base_group + \
+          '\'" "\'' + \
+          'snori74@example.com' + \
+          '\'" ' + \
+          '| at   -v  ' + \
+          shot_time + \
+          ' ' + \
+          mailshot_date.strftime('%m/%d/%Y')
 
     #   create the job...
     retvalue = 0
@@ -129,7 +127,6 @@ def schedule_collect_results(start_date, base_group):
         print("[OK] Results collection scheduled")
     else:
         print("[Error]: Creating the results collection scheduled task")
-
 
 
 if __name__ == '__main__':

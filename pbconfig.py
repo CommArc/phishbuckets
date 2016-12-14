@@ -14,7 +14,6 @@ def get_mailshot_time(set):
 
     """
 
-    import pprint
     import json
     import sys
     from pbsettings import config_dir
@@ -37,58 +36,58 @@ def get_mailshot_time(set):
 
         """
         sample_mailshot_times = {
-            "FIRST": 
-        [
-            [1, "5:00", 0],
-            [1, "10:00", 1],
-            [2, "11:59", 2],
-            [2, "15:00", 3],
-            [3, "9:00", 4],
-            [3, "16:30", 5],
-            [4, "11:00", 6],
-            [4, "14:00", 7],
-            [5, "5:00", 8],
-            [5, "10:00", 0],
-            [8, "11:55", 1],
-            [8, "15:00", 2],
-            [9, "9:00", 6],
-            [9, "16:30", 8],
-            [10, "11:00", 0],
-            [10, "14:00", 9],
-            [11, "5:00", 7],
-            [11, "10:00", 5],
-            [12, "8:30", 3],
-            [12, "10:30", 0]
-        ],
-        "SECOND":
-        [
-            [1, "5:00", 0],
-            [1, "10:00", 1],
-            [2, "11:59", 2],
-            [2, "15:00", 3],
-            [3, "9:00", 4],
-            [3,  "16:30", 5],
-            [4, "11:00", 6],
-            [4, "14:00", 7],
-            [5, "5:00", 8],
-            [5, "10:00", 0],
-            [8, "11:55", 1],
-            [8, "15:00", 2],
-            [9, "9:00", 6],
-            [9, "16:30", 8],
-            [10, "11:00", 0],
-            [10, "14:00", 9],
-            [11, "5:00", 7],
-            [11, "10:00", 5],
-            [12, "8:30", 3],
-            [12, "10:30", 0]
-            ]
+            "FIRST":
+                [
+                    [1, "5:00", 0],
+                    [1, "10:00", 1],
+                    [2, "11:59", 2],
+                    [2, "15:00", 3],
+                    [3, "9:00", 4],
+                    [3, "16:30", 5],
+                    [4, "11:00", 6],
+                    [4, "14:00", 7],
+                    [5, "5:00", 8],
+                    [5, "10:00", 0],
+                    [8, "11:55", 1],
+                    [8, "15:00", 2],
+                    [9, "9:00", 6],
+                    [9, "16:30", 8],
+                    [10, "11:00", 0],
+                    [10, "14:00", 9],
+                    [11, "5:00", 7],
+                    [11, "10:00", 5],
+                    [12, "8:30", 3],
+                    [12, "10:30", 0]
+                ],
+            "SECOND":
+                [
+                    [1, "5:00", 0],
+                    [1, "10:00", 1],
+                    [2, "11:59", 2],
+                    [2, "15:00", 3],
+                    [3, "9:00", 4],
+                    [3, "16:30", 5],
+                    [4, "11:00", 6],
+                    [4, "14:00", 7],
+                    [5, "5:00", 8],
+                    [5, "10:00", 0],
+                    [8, "11:55", 1],
+                    [8, "15:00", 2],
+                    [9, "9:00", 6],
+                    [9, "16:30", 8],
+                    [10, "11:00", 0],
+                    [10, "14:00", 9],
+                    [11, "5:00", 7],
+                    [11, "10:00", 5],
+                    [12, "8:30", 3],
+                    [12, "10:30", 0]
+                ]
         }
 
         with open(full_path, 'w') as outfile:
-            json.dump(sample_mailshot_times, outfile, sort_keys = True,
-                    indent = 4, ensure_ascii=False)
-        
+            json.dump(sample_mailshot_times, outfile, sort_keys=True,
+                      indent=4, ensure_ascii=False)
+
         # Now open the file we just wrote...
         with open(full_path) as data_file:
             mailshot_times = json.load(data_file)
@@ -97,7 +96,6 @@ def get_mailshot_time(set):
                 sys.exit(exit_msg)
 
     return mailshot_times[set]
-
 
 
 def get_phishes(set):
@@ -115,7 +113,6 @@ def get_phishes(set):
     """
     import json
     import sys
-    import pprint
     from pbsettings import config_dir
 
     full_path = config_dir + 'phishes.json'
@@ -131,35 +128,35 @@ def get_phishes(set):
         print("[OK] No 'phishes' found, so creating a sample: ", full_path)
         sample_phishes = {
             "FIRST": [
-            ["Wish you were here?", "gallery.yourpix.tld/664540330544", "Girl-1"],
-            ["CNZ - Your account activity...", "bank.tld/secure", "Online security"],
-            ["LOL - pretty funny!", "partysnaps.yourpix.tld/becks", "Girl-2"],
-            ["So sad to see this...", "secserv.tld/news78757485", "Boy-2"],
-            ["LinkedIn - Jill Meadows", "linkedin.sev.tld/login.html", "Woman-1"],
-            ["Thought you might enjoy...", "snaps.pix.tld/jack", "Boy-1"],
-            ["Airflight deal", "secserv.tld/FLIGHTS.html", "Girl-3"],
-            ["Facebook comment", "facebook.secserv.tld/login.html", "Facebook"],
-            ["Tax return delays", "secserv.tld/revenue.gov.tld/delay", "Taxman"],
-            ["Your offer..", "ebuy.secsv.tld/a4c1kk", "Ebuyer"],
+                ["Wish you were here?", "gallery.yourpix.tld/664540330544", "Girl-1"],
+                ["CNZ - Your account activity...", "bank.tld/secure", "Online security"],
+                ["LOL - pretty funny!", "partysnaps.yourpix.tld/becks", "Girl-2"],
+                ["So sad to see this...", "secserv.tld/news78757485", "Boy-2"],
+                ["LinkedIn - Jill Meadows", "linkedin.sev.tld/login.html", "Woman-1"],
+                ["Thought you might enjoy...", "snaps.pix.tld/jack", "Boy-1"],
+                ["Airflight deal", "secserv.tld/FLIGHTS.html", "Girl-3"],
+                ["Facebook comment", "facebook.secserv.tld/login.html", "Facebook"],
+                ["Tax return delays", "secserv.tld/revenue.gov.tld/delay", "Taxman"],
+                ["Your offer..", "ebuy.secsv.tld/a4c1kk", "Ebuyer"],
             ],
             "SECOND": [
-            ["222h you were here?", "gallery.yourpix.tld/664540330544", "Girl-1"],
-            ["You222r account activity...", "bank.tld/secure", "Online security"],
-            ["LOL22 - pretty funny!", "part22aps.yourpix.tld/becks", "Girl-2"],
-            ["So sad to see this...", "secserv.tld/news78757485", "Boy-2"],
-            ["Linked22Jill Meadows", "link22edin.sev.tld/login.html", "Woman-1"],
-            ["Thoug22ht you might enjoy...", "snaps.pix.tld/jack", "Boy-1"],
-            ["Airf22light deal", "secserv.tld/FLIGHTS.html", "Girl-3"],
-            ["Fac22ebook comment", "facebook.secserv.tld/login.html", "Facebook"],
-            ["Ta22x return delays", "secserv.tld/revenue.gov.tld/delay", "Taxman"],
-            ["Yo22ur offer..", "ebuy.secsv.tld/a4c1kk", "Ebuyer"],
-            ] 
+                ["222h you were here?", "gallery.yourpix.tld/664540330544", "Girl-1"],
+                ["You222r account activity...", "bank.tld/secure", "Online security"],
+                ["LOL22 - pretty funny!", "part22aps.yourpix.tld/becks", "Girl-2"],
+                ["So sad to see this...", "secserv.tld/news78757485", "Boy-2"],
+                ["Linked22Jill Meadows", "link22edin.sev.tld/login.html", "Woman-1"],
+                ["Thoug22ht you might enjoy...", "snaps.pix.tld/jack", "Boy-1"],
+                ["Airf22light deal", "secserv.tld/FLIGHTS.html", "Girl-3"],
+                ["Fac22ebook comment", "facebook.secserv.tld/login.html", "Facebook"],
+                ["Ta22x return delays", "secserv.tld/revenue.gov.tld/delay", "Taxman"],
+                ["Yo22ur offer..", "ebuy.secsv.tld/a4c1kk", "Ebuyer"],
+            ]
         }
 
         with open(config_dir + 'phishes.json', 'w') as outfile:
-            json.dump(sample_phishes, outfile, sort_keys = True, indent = 4,
-                ensure_ascii=False)
-        
+            json.dump(sample_phishes, outfile, sort_keys=True, indent=4,
+                      ensure_ascii=False)
+
         # Now open this file we just wrote...
         with open(config_dir + 'phishes.json') as data_file:
             phishes = json.load(data_file)

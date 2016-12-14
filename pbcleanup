@@ -21,15 +21,15 @@ import requests
 from pbsettings import URL, GOPHISH_KEY
 from pbgophish import delete_group, delete_camp
 
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(
-        "\n Usage: pbcleanup  <usergroup> \n"
-        "\n e.g pbcleanup MOFF16  \n"
+            "\n Usage: pbcleanup  <usergroup> \n"
+            "\n e.g pbcleanup MOFF16  \n"
         )
     base_group = sys.argv[1]
     target_group = sys.argv[1]
-
 
     # get list of groups from the server
     #
@@ -44,18 +44,18 @@ def main():
         if group["name"] == target_group:
             print("Found target group: ", target_group)
             found = True
-    if found == False:
+    if not found:
         exit_msg = "[Error] target group: '" + target_group + "' not found."
         sys.exit(exit_msg)
 
     # ...and delete 'em - 
     # (but we never zap the manually setup 'spear' groups
     #
-    deleted =0
+    deleted = 0
     for group in groups:
         if (target_group in group["name"]) and \
-          (target_group != group["name"]) and \
-          ( "-spear-" not in group["name"]):
+                (target_group != group["name"]) and \
+                ("-spear-" not in group["name"]):
             delete_group(group["id"], group["name"])
             deleted += 1
     if deleted > 0:
@@ -69,9 +69,9 @@ def main():
     resp = requests.get(full_url, params=GOPHISH_KEY)
     campaigns = resp.json()
 
-    deleted =0
+    deleted = 0
     for camp in campaigns:
-        if (target_group in camp["name"]):
+        if target_group in camp["name"]:
             delete_camp(camp["id"], camp["name"])
             deleted += 1
     if deleted > 0:
@@ -82,10 +82,8 @@ def main():
     # We won't try to automate this for now...
     # 
     print("\nYou may also need to manually kill any queued tasks with: 'pbkill ",
-          target_group, "'",sep = "")
-
-# ------------ end of main() ----------------------------
+          target_group, "'", sep = "")  # ------------ end of main() ----------------------------
 
 
-if __name__ == '__main__':
-    sys.exit(main())
+    if __name__ == '__main__':
+        sys.exit(main())

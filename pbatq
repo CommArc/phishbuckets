@@ -22,20 +22,15 @@ pbatq - like  'atq', but more useful for us
 #   - special handling for the "pbcollectresults" jobs
 #   - cleanup the code
 
-import re
-import os
-import sys
-import csv
-import json
-import time
 import calendar
-import requests
-import datetime
+import csv
 import subprocess
+import sys
+
 
 def main():
-    global base_group
-    global key
+    base_group
+    key
 
     at_tasks = get_at_tasks()
     clean_tasks = []
@@ -45,17 +40,18 @@ def main():
         #   Get and append details
         details = get_details(task[0])
         try:
-            at_tasks[idx].append(details[0])   # Campaign name
-            at_tasks[idx].append(details[1])   # Subject line
-            type(at_tasks[idx][7]) # will except if an 'oddball'
+            at_tasks[idx].append(details[0])  # Campaign name
+            at_tasks[idx].append(details[1])  # Subject line
+            type(at_tasks[idx][7])  # will except if an 'oddball'
             #   Calc and append a timestamp to sort by 
             timestamp = calc_timestamp(task)
             at_tasks[idx].append(timestamp)
-            clean_tasks.append(at_tasks[idx]) 
+            clean_tasks.append(at_tasks[idx])
         except:
             print("\nSkipped 'at' job #: ", task[0], " - something odd with this!\n")
 
     sort_and_print(clean_tasks)
+
 
 # end of main()
 
@@ -65,13 +61,13 @@ def get_at_tasks():
     """Show the queued tasks."""
 
     bash = "atq"
-    atlist = subprocess.check_output([bash], shell = True)
+    atlist = subprocess.check_output([bash], shell=True)
     #   Comes back as bytes, hence the decode bit...
     alljobs = atlist.decode("utf-8")
     jobslist = alljobs.split("\n")
-    del jobslist[-1]    # delete the blank one at the end
+    del jobslist[-1]  # delete the blank one at the end
 
-    at_tasks = []       # the new list
+    at_tasks = []  # the new list
     job_num = 0
     for job in jobslist:
         job_num += 1
@@ -85,16 +81,14 @@ def get_at_tasks():
     return at_tasks
 
 
-
 def get_details(tasknum):
     """ Get the details for an 'at' task, based on its #."""
 
     bash = "at -c " + tasknum + "| tail -2 |head -1"
-    atdet = (subprocess.check_output([bash], shell = True)).decode("utf-8")
-    atdet_list = []
-    atdet_list.append(atdet)
-    read_items =csv.reader(atdet_list, delimiter=' ', quotechar="'",
-            skipinitialspace = True)
+    atdet = (subprocess.check_output([bash], shell=True)).decode("utf-8")
+    atdet_list = [atdet]
+    read_items = csv.reader(atdet_list, delimiter=' ', quotechar="'",
+                            skipinitialspace=True)
     key_items = list(read_items)
     try:
         the_two = [key_items[0][1], key_items[0][2]]
@@ -103,19 +97,21 @@ def get_details(tasknum):
         return
 
 
+# noinspection PyPep8Naming,PyPep8Naming
 def calc_timestamp(task):
     """ Make an ISO date-time string to sort by."""
 
     dd = task[3].zfill(2)
+    # noinspection PyPep8Naming
     MMM = task[2]
     tttt = task[4]
+    # noinspection PyPep8Naming
     YYYY = task[5]
-    months = {v: k for k,v in enumerate(calendar.month_abbr)}
+    months = {v: k for k, v in enumerate(calendar.month_abbr)}
     mm = str(months[MMM]).zfill(2)
     # ISO = YYYY-MM-DDTHH:MM:SS.mmmmmm
-    timestamp = str(YYYY) + "-" + str(mm) + "-" + dd + " " + str(tttt) 
+    timestamp = str(YYYY) + "-" + str(mm) + "-" + dd + " " + str(tttt)
     return timestamp
-
 
 
 def sort_and_print(tasklist):
@@ -135,7 +131,7 @@ def sort_and_print(tasklist):
                 task[4][0:5], " ",
                 task[6], " ",
                 task[7]
-                )
+            )
         except:
             print("Skipped: ", task[0])
     return

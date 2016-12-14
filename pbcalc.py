@@ -8,7 +8,6 @@ def calc_timestamp(task):
         Take text output from the Linux 'atq' command and return an
         ISO (YYYY-MM-DDTHH:MM:SS.mmmmmm) value that we can sort by.
     """
-    import datetime
 
     dd = task[3].zfill(2)
     MMM = task[2]
@@ -25,7 +24,7 @@ def check_date(start_date):
     import datetime
     import sys
 
-    if (start_date == 'now'):
+    if start_date == 'now':
         print("[OK] Using 'now' - so cool!")
         return 'now'
 

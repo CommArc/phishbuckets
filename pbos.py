@@ -13,7 +13,7 @@ def get_at_tasks():
     #   Comes back as bytes, hence the decode bit...
     alljobs = atlist.decode("utf-8")
     jobslist = alljobs.split("\n")
-    del jobslist[-1]    # delete the blank one at the end
+    del jobslist[-1]  # delete the blank one at the end
 
     at_tasks = []
     job_num = 0
@@ -38,8 +38,7 @@ def get_details(tasknum):
 
     bash = "at -c " + tasknum + "| tail -2 |head -1"
     atdet = (subprocess.check_output([bash], shell=True)).decode("utf-8")
-    atdet_list = []
-    atdet_list.append(atdet)
+    atdet_list = [atdet]
     read_items = csv.reader(atdet_list, delimiter=' ',
                             quotechar="'", skipinitialspace=True)
     key_items = list(read_items)
@@ -78,7 +77,7 @@ def schedule_mailshots(base_group, start_date, phish_set, sched_name):
         else:
             try:
                 mailshot_date = datetime.datetime.strptime(start_date, '%d/%m/%Y')
-                mailshot_date += datetime.timedelta(days=mailshot_time[shot][0]-1)
+                mailshot_date += datetime.timedelta(days=mailshot_time[shot][0] - 1)
             except ValueError:
                 print("[Error] Date is not in dd/mm/YYYY format")
             shot_time = mailshot_time[shot][1]
@@ -86,20 +85,20 @@ def schedule_mailshots(base_group, start_date, phish_set, sched_name):
         # Backslashes so that the "at" command line is properly quoted,
         # and 'shot%10' because there are just 10 defined 'phishes'
         cmd = 'echo /usr/local/bin/pbcreatecampaign  ' + \
-            '"\'AUTO-' + base_group + '-' + str(shot) + '\'" "\'' + \
-            phishes[shot%10][0] + '\'" ' + \
-            '"\'Scare page - ' + base_group + '\'" "\'' + \
-            phishes[shot%10][1] + '\'" "\'' + \
-            phishes[shot%10][2] + '\'" "\'' + \
-            base_group + '-' + str(mailshot_time[shot][2]) + '\'" ' + \
-            '|at   -v  ' + \
-            shot_time + ' ' + mailshot_date.strftime('%m/%d/%Y')
+              '"\'AUTO-' + base_group + '-' + str(shot) + '\'" "\'' + \
+              phishes[shot % 10][0] + '\'" ' + \
+              '"\'Scare page - ' + base_group + '\'" "\'' + \
+              phishes[shot % 10][1] + '\'" "\'' + \
+              phishes[shot % 10][2] + '\'" "\'' + \
+              base_group + '-' + str(mailshot_time[shot][2]) + '\'" ' + \
+              '|at   -v  ' + \
+              shot_time + ' ' + mailshot_date.strftime('%m/%d/%Y')
 
         # create the job...
         retvalue = 0
         retvalue = os.system(cmd)
 
-        if (retvalue != 0):
+        if retvalue != 0:
             print("[Error] Creating the 'at' task gave: " + str(retvalue))
 
     time.sleep(2)
@@ -124,21 +123,21 @@ def schedule_spear_mailshots(base_group, spear_names, mailshot_data_items):
 
         # Tricky backslashing needed for the "at" command line to work
         cmd = 'echo /usr/local/bin/pbcreatecampaign  ' + \
-            '"\'' + \
-            spear_name + '\'" "\'' + \
-            spear_name + '\'" ' + \
-            '"\'Scare page - ' + base_group + '\'" "\'' + \
-            URL + '\'" "\'' + \
-            spear_name + '\'" "\'' + \
-            spear_name + '\'" ' + \
-            '|at   -v  ' + \
-            time + ' ' + ISO_date
+              '"\'' + \
+              spear_name + '\'" "\'' + \
+              spear_name + '\'" ' + \
+              '"\'Scare page - ' + base_group + '\'" "\'' + \
+              URL + '\'" "\'' + \
+              spear_name + '\'" "\'' + \
+              spear_name + '\'" ' + \
+              '|at   -v  ' + \
+              time + ' ' + ISO_date
 
         # create the job...
         retvalue = 0
         retvalue = os.system(cmd)
 
-        if (retvalue != 0):
+        if retvalue != 0:
             print("[Error] Creating the 'at' task gave: " + str(retvalue))
 
 
@@ -154,15 +153,15 @@ def show_schedule(base_group):
     try:
         atlist = subprocess.check_output([bash], shell=True)
     except:
-        pass    # no need to panic, always gets 'calledProcessError'
+        pass  # no need to panic, always gets 'calledProcessError'
 
-    #   comes back as bytes, hence the decode bit...
+    # comes back as bytes, hence the decode bit...
     print(atlist.decode("utf-8"))
     print(("You can manipulate the 'at' queue as follows: "
            "\n 'pbatq' \t\t - list queued tasks"
            "\n 'at -c #' \t\t - details of one"
            "\n 'pbkill <base group>' \t - kill all tasks for a base group\n"
-          ))
+           ))
 
 
 def sort_and_print(tasklist):
@@ -180,7 +179,7 @@ def sort_and_print(tasklist):
                 task[4][0:5], " ",
                 task[6], " ",
                 task[7]
-                )
+            )
         except:
             print("Skipped: ", task[0])
     return
@@ -264,7 +263,7 @@ def send_the_report(r, base_group, recips):
     body += str(sp_num_of_staff) + " of these"
     body += " have actually been sent 'spear-phishing' emails - and of these, "
 
-    if sp_num_of_staff > 0:     # if for some reason no spear phishes were done
+    if sp_num_of_staff > 0:  # if for some reason no spear phishes were done
         body += str(round(sp_num_who_clicked * 100 / sp_num_of_staff, 2))
     else:
         body += "zero "
@@ -288,57 +287,57 @@ def send_the_report(r, base_group, recips):
 
     #   The first file...
     try:
-        filename = mail_out1    # "/tmp/ACME..." will become "tmpACME..."
+        filename = mail_out1  # "/tmp/ACME..." will become "tmpACME..."
         attachment = open(mail_out1, "rb")
         part = MIMEBase('application', 'octet-stream')
-        part.set_payload((attachment).read())
+        part.set_payload(attachment.read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
                         "attachment; filename= %s" % filename)
         msg.attach(part)
     except FileNotFoundError:
-            print("file is missing")
+        print("file is missing")
 
-    #   The second file...
+    # The second file...
     try:
         filename = mail_out2
         attachment = open(mail_out2, "rb")
         part = MIMEBase('application', 'octet-stream')
-        part.set_payload((attachment).read())
+        part.set_payload(attachment.read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
                         "attachment; filename= %s" % filename)
         msg.attach(part)
     except FileNotFoundError:
-            print("file is missing")
+        print("file is missing")
 
-    #   The third file...
+    # The third file...
     try:
         filename = mail_out3
         attachment = open(mail_out3, "rb")
         part = MIMEBase('application', 'octet-stream')
-        part.set_payload((attachment).read())
+        part.set_payload(attachment.read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
                         "attachment; filename= %s" % filename)
         msg.attach(part)
     except FileNotFoundError:
-            print("file is missing")
+        print("file is missing")
 
-    #   The fourth file...
+    # The fourth file...
     try:
         filename = mail_out4
         attachment = open(mail_out4, "rb")
         part = MIMEBase('application', 'octet-stream')
-        part.set_payload((attachment).read())
+        part.set_payload(attachment.read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
                         "attachment; filename= %s" % filename)
         msg.attach(part)
     except FileNotFoundError:
-            print("file is missing")
+        print("file is missing")
 
-    #   And now send the complete thing off!
+    # And now send the complete thing off!
     text = msg.as_string()
     for recip in recips:
         print("Sending to:", recip)
@@ -350,22 +349,22 @@ def send_the_report(r, base_group, recips):
         except:
             print("[ERROR] Email sending failed")
 
-    #   Remove the files now that we've sent them, and don't
+    # Remove the files now that we've sent them, and don't
     #   crash out if one is missing for some reason - e.g. if
     #   there were no spear phishes done, so no corresponding file.
     try:
         os.remove(mail_out1)
     except FileNotFoundError:
-            pass
+        pass
     try:
         os.remove(mail_out2)
     except FileNotFoundError:
-            pass
+        pass
     try:
         os.remove(mail_out3)
     except FileNotFoundError:
-            pass
+        pass
     try:
         os.remove(mail_out4)
     except FileNotFoundError:
-            pass
+        pass

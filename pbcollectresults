@@ -19,15 +19,14 @@ from pbsettings import GOPHISH_KEY, URL
 
 
 def main():
-
     if len(sys.argv) < 3:
         sys.exit(
-        "\n Usage: pbcollectresults <usergroup> <rcp1@dom.kr> [<rcip2@dim.kr]\n"
-        "\n e.g pbcollectresults ACME1432  jeff@acme.co.kr pam@wif.org \n"
+            "\n Usage: pbcollectresults <usergroup> <rcp1@dom.kr> [<rcip2@dim.kr]\n"
+            "\n e.g pbcollectresults ACME1432  jeff@acme.co.kr pam@wif.org \n"
         )
 
     base_group = sys.argv[1]
-    recips=[]
+    recips = []
     for param in range(2, len(sys.argv)):
         recips.append(sys.argv[param])
     check_recip_addresses(recips)
@@ -35,9 +34,9 @@ def main():
     r = get_results()
     send_the_report(r, base_group, recips)
 
+
 # -------------end of main() --------------------------------------------------
 
 
 if __name__ == '__main__':
     sys.exit(main())
-

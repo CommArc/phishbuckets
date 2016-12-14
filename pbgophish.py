@@ -51,7 +51,7 @@ def check_group(base_group):
         if group["name"] == base_group:
             found = True
             base_group_object = group
-            global num_of_targets
+            num_of_targets
             num_of_targets = len(group["targets"])
             print('[OK] Found base group:  "', base_group, '"', sep='')
             return base_group_object
@@ -71,7 +71,7 @@ def delete_group(grp_id, grp_name):
     headers = {'content-type': 'application/json'}
     full_url = URL + "/api/groups/"+str(grp_id)
     resp = requests.delete(full_url, params=GOPHISH_KEY, headers=headers)
-    if (resp.status_code == 200):
+    if resp.status_code == 200:
         print("Deleted group:", grp_name, "(", grp_id, ")")
     else:
         print("Houston, we have a problem....")
@@ -92,7 +92,7 @@ def create_camp(n_data):
     headers = {'content-type': 'application/json'}
     full_url = URL + "/api/campaigns/"
     resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers)
-    if (resp.status_code == 201):
+    if resp.status_code == 201:
         print("[OK] Added, and all went fine")
     else:
         sys.exit("Bugger! campaign creation failed")
@@ -108,7 +108,7 @@ def delete_camp(id, name):
     headers = {'content-type': 'application/json'}
     full_url = URL + "/api/campaigns/"+str(id)
     resp = requests.delete(full_url, params=GOPHISH_KEY, headers=headers)
-    if (resp.status_code == 200):
+    if resp.status_code == 200:
         print("Deleted campaign:", name, "(", id, ")")
     else:
         print("Houston, we have a problem....")
@@ -248,6 +248,7 @@ def check_smtp_profiles(phishes):
     print("[OK] All smtp profiles exist...")
 
 
+# noinspection PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames
 def check_scare_page(base_group):
     """Check that a correctly-named "Scare page" for this client exists."""
 
@@ -272,7 +273,8 @@ def check_scare_page(base_group):
     print('[OK] Found "', scare_page, '"', sep="")
 
 
-def create_sub(grp_name, grp_targets):
+    # noinspection PyShadowingNames
+    def create_sub(grp_name, grp_targets):
     """Create the sub-groups on the server. """
 
     from pbsettings import GOPHISH_KEY, URL
@@ -289,7 +291,7 @@ def create_sub(grp_name, grp_targets):
     full_url = URL + "/api/groups/"
     resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers)
 
-    if (resp.status_code == 201):
+    if resp.status_code == 201:
         print("[OK] Successfully added:", grp_name)
     else:
         print("[Error] Problem creating subgroup: ", grp_name)
@@ -301,8 +303,8 @@ def create_sub(grp_name, grp_targets):
 
     return
 
-
-def select_the_group(base_group):
+    # noinspection PyShadowingNames,PyShadowingNames
+    def select_the_group(base_group):
     """Get the list of groups."""
 
     from pbsettings import GOPHISH_KEY, URL
@@ -329,8 +331,8 @@ def select_the_group(base_group):
         sys.exit("[Error] Target group: '" + base_group + "' not found.\n")
     return
 
-
-def get_mailshot_data(spear_name):
+    # noinspection PyShadowingNames
+    def get_mailshot_data(spear_name):
     """Get string of data (time, date, URL) from 'Position' of first user"""
 
     from pbsettings import GOPHISH_KEY, URL
@@ -340,7 +342,7 @@ def get_mailshot_data(spear_name):
     full_url = URL + "/api/groups"
     resp = requests.get(full_url, params=GOPHISH_KEY)
     groups = resp.json()
-    for group in (groups):
+    for group in groups:
         if group["name"] == spear_name:
             data = group["targets"][0]["position"]
             return data
@@ -348,8 +350,8 @@ def get_mailshot_data(spear_name):
     exit_msg = "[Error]: Could not find group " + spear_name
     sys.exit(exit_msg)
 
-
-def get_results():
+    # noinspection PyShadowingNames
+    def get_results():
     """Find matching campaigns, and produce two report files."""
 
     from pbsettings import GOPHISH_KEY, URL
@@ -458,7 +460,8 @@ def get_results():
             break   # because we've found all that matter
 
     #   ...and then the results
-    for camp in campaigns:
+        # noinspection PyAssignmentToLoopOrWithParameter
+        for camp in campaigns:
         if target_group+'-spear-' in camp["name"]:
             print("[OK] Processing ", camp["name"])
             sp_num_of_staff += 1    # cos only one user per spear campaign
