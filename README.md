@@ -84,7 +84,7 @@ will use
 * Document these ten phishes in your _phishes.json_ file
 * Decide on a schedule, and document in _mailshot_time.json_ 
 * Add your server URL, API key and your 'phishmaster' email to the _config_ file
-At this point you shoild be able to test the system by typing something like: 
+At this point you should be able to test the system by typing something like:
 
     pbcreateplan MYGROUP 15/5/2017 first first
 

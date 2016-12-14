@@ -41,10 +41,10 @@ def main():
     sched_name = sys.argv[4]
 
     #   Check that everything is OK
-    start = check_date(start_date)
+    check_date(start_date)
     base_group_object = check_group(base_group)
     phishes = get_phishes(phish_set)
-    schedule = get_mailshot_time(sched_name)
+    get_mailshot_time(sched_name)
     check_templates(phishes)
     check_smtp_profiles(phishes)
     check_scare_page(base_group)
@@ -61,17 +61,13 @@ def main():
 
     #   Schedule the mailshots and results collection, with
     #   the option of picking any of several sets of schedules
-    #   or 'now' to do them all immediatly
+    #   or 'now' to do them all immediately
     schedule_mailshots(base_group, start_date, phish_set, sched_name)
     if start_date != "now":
         schedule_collect_results(start_date, base_group)
 
     # Display the queued up jobs
     show_schedule(base_group)
-
-
-# ------- supporting functions are defined below -------------------------
-
 
 
 def create_subgroup_structure(base_group):
@@ -121,7 +117,6 @@ def schedule_collect_results(start_date, base_group):
           mailshot_date.strftime('%m/%d/%Y')
 
     #   create the job...
-    retvalue = 0
     retvalue = os.system(cmd)
     if retvalue == 0:
         print("[OK] Results collection scheduled")

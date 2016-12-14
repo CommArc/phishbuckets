@@ -51,8 +51,6 @@ def check_group(base_group):
         if group["name"] == base_group:
             found = True
             base_group_object = group
-            num_of_targets
-            num_of_targets = len(group["targets"])
             print('[OK] Found base group:  "', base_group, '"', sep='')
             return base_group_object
 
@@ -69,7 +67,7 @@ def delete_group(grp_id, grp_name):
     import sys
 
     headers = {'content-type': 'application/json'}
-    full_url = URL + "/api/groups/"+str(grp_id)
+    full_url = URL + "/api/groups/" + str(grp_id)
     resp = requests.delete(full_url, params=GOPHISH_KEY, headers=headers)
     if resp.status_code == 200:
         print("Deleted group:", grp_name, "(", grp_id, ")")
@@ -96,9 +94,10 @@ def create_camp(n_data):
         print("[OK] Added, and all went fine")
     else:
         sys.exit("Bugger! campaign creation failed")
+    return resp
 
 
-def delete_camp(id, name):
+def delete_camp(camp_id, name):
     """Delete a campaign, by it's id."""
 
     from pbsettings import GOPHISH_KEY, URL
@@ -106,10 +105,10 @@ def delete_camp(id, name):
     import sys
 
     headers = {'content-type': 'application/json'}
-    full_url = URL + "/api/campaigns/"+str(id)
+    full_url = URL + "/api/campaigns/" + str(camp_id)
     resp = requests.delete(full_url, params=GOPHISH_KEY, headers=headers)
     if resp.status_code == 200:
-        print("Deleted campaign:", name, "(", id, ")")
+        print("Deleted campaign:", name, "(", camp_id, ")")
     else:
         print("Houston, we have a problem....")
         print("\nText: ")
@@ -164,8 +163,8 @@ def check_spear_templates(base_group, spears):
             if dict(template[1])["name"] == sp_name:
                 missing = False
         if missing:
-            err_msg = "[Error]: The email template '" + sp_name +\
-                "' does not exist on the server"
+            err_msg = "[Error]: The email template '" + sp_name + \
+                      "' does not exist on the server"
             print(err_msg)
             sys.exit("{Error] All the email templates must be setup first\n")
 
@@ -218,8 +217,8 @@ def check_spear_smtp_profiles(base_group, spears):
             if dict(profile[1])["name"] == sp_name:
                 missing = False
         if missing:
-            err_msg = "[Error] The SMTP profile '" + sp_name +\
-                "' does not exist on the server"
+            err_msg = "[Error] The SMTP profile '" + sp_name + \
+                      "' does not exist on the server"
             print(err_msg)
             sys.exit("[Error] All the SMTP sending profiles must be setup\n")
 
@@ -242,13 +241,12 @@ def check_smtp_profiles(phishes):
             if dict(smtp[1])["name"] == phish[2]:
                 missing = False
         if missing:
-                print("[Error] SMTP profile '", phish[2], "' is missing")
-                sys.exit("[Error] All smtp profiles must be setup first\n")
+            print("[Error] SMTP profile '", phish[2], "' is missing")
+            sys.exit("[Error] All smtp profiles must be setup first\n")
 
     print("[OK] All smtp profiles exist...")
 
 
-# noinspection PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames,PyShadowingNames
 def check_scare_page(base_group):
     """Check that a correctly-named "Scare page" for this client exists."""
 
@@ -273,8 +271,7 @@ def check_scare_page(base_group):
     print('[OK] Found "', scare_page, '"', sep="")
 
 
-    # noinspection PyShadowingNames
-    def create_sub(grp_name, grp_targets):
+def create_sub(grp_name, grp_targets):
     """Create the sub-groups on the server. """
 
     from pbsettings import GOPHISH_KEY, URL
@@ -304,7 +301,9 @@ def check_scare_page(base_group):
     return
 
     # noinspection PyShadowingNames,PyShadowingNames
-    def select_the_group(base_group):
+
+
+def select_the_group(base_group):
     """Get the list of groups."""
 
     from pbsettings import GOPHISH_KEY, URL
@@ -332,7 +331,9 @@ def check_scare_page(base_group):
     return
 
     # noinspection PyShadowingNames
-    def get_mailshot_data(spear_name):
+
+
+def get_mailshot_data(spear_name):
     """Get string of data (time, date, URL) from 'Position' of first user"""
 
     from pbsettings import GOPHISH_KEY, URL
@@ -351,7 +352,9 @@ def check_scare_page(base_group):
     sys.exit(exit_msg)
 
     # noinspection PyShadowingNames
-    def get_results():
+
+
+def get_results():
     """Find matching campaigns, and produce two report files."""
 
     from pbsettings import GOPHISH_KEY, URL
@@ -374,10 +377,9 @@ def check_scare_page(base_group):
     sp_each_click = []
     sp_num_of_staff = 0
     found = False
-    sp_found = False
     phishes_clicked = defaultdict(int)
     sp_phishes_clicked = defaultdict(int)
-    sp_targets = []     # those who were sent a spear-phish
+    sp_targets = []  # those who were sent a spear-phish
 
     td = tempfile.gettempdir()
     mail_out1 = os.path.join(td, target_group + '-raw-events.csv')
@@ -402,138 +404,138 @@ def check_scare_page(base_group):
     f1 = open(mail_out1, 'w')
     f2 = open(mail_out2, 'w')
     for camp in campaigns:
-        if "AUTO-"+target_group in camp["name"]:
+        if "AUTO-" + target_group in camp["name"]:
             print("[OK] Processing ", camp["name"])
             if not found:
                 print("Campaign, Created_date, Created_time, Completed_date",
                       "Completed_time, From, Subject, Mail, First, Last",
                       "Status", file=f1)  # header line for f1
                 print("Campaign, Date, Time, Email, Action", file=f2)
-            found = True
-            for event in camp["timeline"]:
-                #   Note the slicing of the ISO 8601 date/time into two fields
-                print(camp["name"], ", ", event["time"][0:10], ", ",
-                      event["time"][11:16], ", ",  event["email"], ", ",
-                      event["message"], file=f2)
-                if event["message"] == "Clicked Link":
-                    each_click.append(event["email"])
+                found = True
+                for event in camp["timeline"]:
+                    #   Note the slicing of the ISO 8601 date/time into two fields
+                    print(camp["name"], ", ", event["time"][0:10], ", ",
+                          event["time"][11:16], ", ", event["email"], ", ",
+                          event["message"], file=f2)
+                    if event["message"] == "Clicked Link":
+                        each_click.append(event["email"])
 
-            for result in camp["results"]:
-                #   Note the slicing of the ISO 8601 date/time into two fields
-                print(camp["name"],
-                      ", ", camp["created_date"][0:10],
-                      ", ", camp["created_date"][11:16],
-                      ", ", camp["completed_date"][0:10],
-                      ", ", camp["completed_date"][11:16],
-                      ", ", camp["smtp"]["from_address"],
-                      ", ", camp["template"]["subject"],
-                      ", ", result["email"],
-                      ", ", result["first_name"],
-                      ", ", result["last_name"],
-                      ", ", result["status"], file=f1)
-                #   and we keep a tally of the sucessful 'phises'...
-                if result["status"] == "Success":
-                    phishes_clicked[camp["template"]["subject"]] += 1
-            camp_list.append(camp)
+                for result in camp["results"]:
+                    #   Note the slicing of the ISO 8601 date/time into two fields
+                    print(camp["name"],
+                          ", ", camp["created_date"][0:10],
+                          ", ", camp["created_date"][11:16],
+                          ", ", camp["completed_date"][0:10],
+                          ", ", camp["completed_date"][11:16],
+                          ", ", camp["smtp"]["from_address"],
+                          ", ", camp["template"]["subject"],
+                          ", ", result["email"],
+                          ", ", result["first_name"],
+                          ", ", result["last_name"],
+                          ", ", result["status"], file=f1)
+                    #   and we keep a tally of the sucessful 'phishes'...
+                    if result["status"] == "Success":
+                        phishes_clicked[camp["template"]["subject"]] += 1
+                camp_list.append(camp)
 
-    f1.close()
-    f2.close()
-    if not found:
-        sys.exit("[Error] No general campaigns matching: '" +
-                 target_group + "' were found.\n")
+        f1.close()
+        f2.close()
+        if not found:
+            sys.exit("[Error] No general campaigns matching: '" +
+                     target_group + "' were found.\n")
 
-    # Part II
-    #
-    """ Now we go looking for all the spear-phishing data"""
+        # Part II
+        #
+        """ Now we go looking for all the spear-phishing data"""
 
-    #   First, the full details of all who will have been sent 'spears'...
-    full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
-    groups = resp.json()
-    for num in range(10):
-        sp_found = False
-        for group in groups:
-            if (target_group + '-spear-' + str(num)) in group["name"]:
-                sp_targets.append(group["targets"][0])  # should only be one
-                sp_found = True
-        if not sp_found:
-            break   # because we've found all that matter
-
-    #   ...and then the results
-        # noinspection PyAssignmentToLoopOrWithParameter
-        for camp in campaigns:
-        if target_group+'-spear-' in camp["name"]:
-            print("[OK] Processing ", camp["name"])
-            sp_num_of_staff += 1    # cos only one user per spear campaign
+        #   First, the full details of all who will have been sent 'spears'...
+        full_url = URL + "/api/groups"
+        resp = requests.get(full_url, params=GOPHISH_KEY)
+        groups = resp.json()
+        for num in range(10):
+            sp_found = False
+            for group in groups:
+                if (target_group + '-spear-' + str(num)) in group["name"]:
+                    sp_targets.append(group["targets"][0])  # should only be one
+                    sp_found = True
             if not sp_found:
-                f3 = open(mail_out3, 'w')
-                f4 = open(mail_out4, 'w')
-                print("Campaign, Created_date, Created_time, Completed_date",
-                      "Completed_time, From, Mail, Subject, First, Last",
-                      "Status", file=f3)  # header line for f3
-                print("Campaign, Date, Time, Email, Action", file=f4)
-            sp_found = True
-            for event in camp["timeline"]:
-                # Note the slicing of the ISO 8601 date/time into two fields
-                print(camp["name"], ", ", event["time"][0:10], ", ",
-                      event["time"][11:16], ", ",  event["email"], ", ",
-                      event["message"], file=f4)
+                break  # because we've found all that matter
 
-                #   grab all email addresses seen, many will be dups
-                # sp_targets_seen.append(event["email"])
-                if event["message"] == "Clicked Link":
-                    sp_each_click.append(event["email"])
+                #   ...and then the results
+            # noinspection PyAssignmentToLoopOrWithParameter
+            for camp in campaigns:
+                if target_group + '-spear-' in camp["name"]:
+                    print("[OK] Processing ", camp["name"])
+                    sp_num_of_staff += 1  # cos only one user per spear campaign
+                    if not sp_found:
+                        f3 = open(mail_out3, 'w')
+                        f4 = open(mail_out4, 'w')
+                        print("Campaign, Created_date, Created_time, Completed_date",
+                              "Completed_time, From, Mail, Subject, First, Last",
+                              "Status", file=f3)  # header line for f3
+                        print("Campaign, Date, Time, Email, Action", file=f4)
+                        sp_found = True
+                        for event in camp["timeline"]:
+                            # Note the slicing of the ISO 8601 date/time into two fields
+                            print(camp["name"], ", ", event["time"][0:10], ", ",
+                                  event["time"][11:16], ", ", event["email"], ", ",
+                                  event["message"], file=f4)
 
-            for result in camp["results"]:
-                # Note the slicing of the ISO 8601 date/time into two fields
-                print(camp["name"],
-                      ", ", camp["created_date"][0:10],
-                      ", ", camp["created_date"][11:16],
-                      ", ", camp["completed_date"][0:10],
-                      ", ", camp["completed_date"][11:16],
-                      ", ", camp["smtp"]["from_address"],
-                      ", ", camp["template"]["subject"],
-                      ", ", result["email"],
-                      ", ", result["first_name"],
-                      ", ", result["last_name"],
-                      ", ", result["status"], file=f3)
-                # and we keep a tally of the sucessful 'phishes'...
-                if result["status"] == "Success":
-                    sp_phishes_clicked[camp["template"]["subject"]] += 1
-            sp_camp_list.append(camp)
+                            #   grab all email addresses seen, many will be dups
+                            # sp_targets_seen.append(event["email"])
+                            if event["message"] == "Clicked Link":
+                                sp_each_click.append(event["email"])
 
-    if sp_found:
-        f3.close()
-        f4.close()
-    else:
-        # not a fatal problem, so we don't call 'os.exit' for this..
-        print("[Error]: No spear-phishing campaigns matching: '" +
-              target_group + "' were found.\n")
+                        for result in camp["results"]:
+                            # Note the slicing of the ISO 8601 date/time into two fields
+                            print(camp["name"],
+                                  ", ", camp["created_date"][0:10],
+                                  ", ", camp["created_date"][11:16],
+                                  ", ", camp["completed_date"][0:10],
+                                  ", ", camp["completed_date"][11:16],
+                                  ", ", camp["smtp"]["from_address"],
+                                  ", ", camp["template"]["subject"],
+                                  ", ", result["email"],
+                                  ", ", result["first_name"],
+                                  ", ", result["last_name"],
+                                  ", ", result["status"], file=f3)
+                            # and we keep a tally of the sucessful 'phishes'...
+                            if result["status"] == "Success":
+                                sp_phishes_clicked[camp["template"]["subject"]] += 1
+                        sp_camp_list.append(camp)
 
-    # Part III - now total everthing up...
+            if sp_found:
+                f3.close()
+                f4.close()
+            else:
+                # not a fatal problem, so we don't call 'os.exit' for this..
+                print("[Error]: No spear-phishing campaigns matching: '" +
+                      target_group + "' were found.\n")
 
-    #   Using 'set' removes duplicates
-    those_who_clicked = set(each_click)
-    num_who_clicked = len(those_who_clicked)
-    sp_those_who_clicked = set(sp_each_click)
-    sp_num_who_clicked = len(sp_those_who_clicked)
+            # Part III - now total everthing up...
 
-    #   Tally up the scores of which 'phishes' were more successfull...
-    phish_score = ""
-    for k, v in phishes_clicked.items():
-        phish_score += "\t" + str(k) + " - " + str(v) + "\n"
-    sp_phish_score = ""
-    for k, v in sp_phishes_clicked.items():
-        sp_phish_score += "\t" + str(k) + " - " + str(v) + "\n"
+            #   Using 'set' removes duplicates
+            those_who_clicked = set(each_click)
+            num_who_clicked = len(those_who_clicked)
+            sp_those_who_clicked = set(sp_each_click)
+            sp_num_who_clicked = len(sp_those_who_clicked)
 
-    #   Return the results in a dict...
-    return {
-        "num_of_staff": num_of_targets, "num_who_clicked": num_who_clicked,
-        "those_who_clicked": those_who_clicked, "phish_score": phish_score,
-        "sp_num_of_staff": sp_num_of_staff,
-        "sp_targets": sp_targets,
-        "sp_num_who_clicked": sp_num_who_clicked,
-        "sp_those_who_clicked": sp_those_who_clicked,
-        "sp_phish_score": sp_phish_score,
-        "f1": mail_out1, "f2": mail_out2, "f3": mail_out3, "f4": mail_out4
-        }
+            #   Tally up the scores of which 'phishes' were more successfull...
+            phish_score = ""
+            for k, v in phishes_clicked.items():
+                phish_score += "\t" + str(k) + " - " + str(v) + "\n"
+            sp_phish_score = ""
+            for k, v in sp_phishes_clicked.items():
+                sp_phish_score += "\t" + str(k) + " - " + str(v) + "\n"
+
+            # Return the results in a dict...
+            return {
+                "num_of_staff": num_of_targets, "num_who_clicked": num_who_clicked,
+                "those_who_clicked": those_who_clicked, "phish_score": phish_score,
+                "sp_num_of_staff": sp_num_of_staff,
+                "sp_targets": sp_targets,
+                "sp_num_who_clicked": sp_num_who_clicked,
+                "sp_those_who_clicked": sp_those_who_clicked,
+                "sp_phish_score": sp_phish_score,
+                "f1": mail_out1, "f2": mail_out2, "f3": mail_out3, "f4": mail_out4
+            }

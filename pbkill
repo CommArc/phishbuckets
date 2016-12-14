@@ -7,7 +7,7 @@ pbkill <usergroup>
     e.g pbkill ACME0816
 
 TODO:
-    - fix some repeating wierdness...
+    - fix some repeating weirdness...
 
 """
 import re
@@ -58,7 +58,7 @@ def group_name(job):
 
 def kill_job(job):
     cmd = 'atrm ' + job
-    output = subprocess.check_output(cmd, shell=True)
+    subprocess.check_output(cmd, shell=True)
     return
 
 

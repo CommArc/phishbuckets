@@ -3,8 +3,7 @@
 #
 
 
-
-def get_mailshot_time(set):
+def get_mailshot_time(msset):
     """Supply the schedule for the mailshot 'campaigns'.
 
     Twenty times to do a mailshot 'campaign', and which groups get them...
@@ -23,11 +22,11 @@ def get_mailshot_time(set):
     try:
         with open(full_path) as data_file:
             mailshot_times = json.load(data_file)
-            if not set in mailshot_times:
-                exit_msg = "[Error] No set: '" + set + "' found in mailshot_time.json"
+            if msset not in mailshot_times:
+                exit_msg = "[Error] No set: '" + msset + "' found in mailshot_time.json"
                 sys.exit(exit_msg)
 
-    except IOError as e:
+    except IOError:
         print("[OK] No 'mailshot_time' found, so creating a sample: ", full_path)
         """
         Format: day, hour:minute, group - e.g.: 1, "16:00", 9
@@ -91,14 +90,14 @@ def get_mailshot_time(set):
         # Now open the file we just wrote...
         with open(full_path) as data_file:
             mailshot_times = json.load(data_file)
-            if not set in mailshot_times:
-                exit_msg = "[Error] No set: '" + set + "' found in mailshot_time.json"
+            if msset not in mailshot_times:
+                exit_msg = "[Error] No set: '" + msset + "' found in mailshot_time.json"
                 sys.exit(exit_msg)
 
-    return mailshot_times[set]
+    return mailshot_times[msset]
 
 
-def get_phishes(set):
+def get_phishes(phset):
     """
     Pull in all the sets of twenty phishes that we have, then return
     the one requested - or a listing of them all. If no dataset of
@@ -120,11 +119,11 @@ def get_phishes(set):
     try:
         with open(config_dir + 'phishes.json') as data_file:
             phishes = json.load(data_file)
-            if not set in phishes:
-                exit_msg = "[Error] No set: '" + set + "' found in phishes.json"
+            if phset not in phishes:
+                exit_msg = "[Error] No set: '" + phset + "' found in phishes.json"
                 sys.exit(exit_msg)
 
-    except IOError as e:
+    except IOError:
         print("[OK] No 'phishes' found, so creating a sample: ", full_path)
         sample_phishes = {
             "FIRST": [
@@ -160,8 +159,8 @@ def get_phishes(set):
         # Now open this file we just wrote...
         with open(config_dir + 'phishes.json') as data_file:
             phishes = json.load(data_file)
-            if not set in phishes:
-                exit_msg = "[Error] No set: '" + set + "' found in phishes.json"
+            if phset not in phishes:
+                exit_msg = "[Error] No set: '" + phset + "' found in phishes.json"
                 sys.exit(exit_msg)
 
-    return phishes[set]
+    return phishes[phset]

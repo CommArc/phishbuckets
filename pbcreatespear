@@ -37,7 +37,7 @@ def main():
     base_group = sys.argv[1]
 
     #   Check that everthing is fine
-    base_group_object = check_group(base_group)
+    check_group(base_group)
     spears = get_num_spear_groups(base_group)
     check_spear_templates(base_group, spears)
     check_spear_smtp_profiles(base_group, spears)

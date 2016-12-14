@@ -20,7 +20,7 @@ After moving all code to modules, and extensive renaming.
 
 3 - Replace the embarrassing "hack" used for spear phishing, with ????
 
-4 - Rethink the 'schedule' idea, probably replalcing with a default of simply
+4 - Rethink the 'schedule' idea, probably replacing with a default of simply
     "random time", favoring 8:30, 1:15 and 4:30 (say)
 
 5 - Removing any hard limitation to a two week run - so that we can specify

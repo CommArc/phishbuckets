@@ -30,6 +30,7 @@ def get_at_tasks():
     return at_tasks
 
 
+# noinspection PyBroadException
 def get_details(tasknum):
     """ Get the details for an 'at' task, based on its #."""
 
@@ -95,7 +96,6 @@ def schedule_mailshots(base_group, start_date, phish_set, sched_name):
               shot_time + ' ' + mailshot_date.strftime('%m/%d/%Y')
 
         # create the job...
-        retvalue = 0
         retvalue = os.system(cmd)
 
         if retvalue != 0:
@@ -115,10 +115,12 @@ def schedule_spear_mailshots(base_group, spear_names, mailshot_data_items):
         # 'spear' is the index
         date = mailshot_data_items[spear][0]
         time = mailshot_data_items[spear][1]
+        # noinspection PyPep8Naming
         URL = mailshot_data_items[spear][2]
 
         # Assume 'date' is in dd/mm/yyyy format, and move to ISO format...
         dt_date = datetime.datetime.strptime(date, "%d/%m/%Y")
+        # noinspection PyPep8Naming
         ISO_date = datetime.datetime.strftime(dt_date, "%Y-%m-%d")
 
         # Tricky backslashing needed for the "at" command line to work
@@ -134,13 +136,13 @@ def schedule_spear_mailshots(base_group, spear_names, mailshot_data_items):
               time + ' ' + ISO_date
 
         # create the job...
-        retvalue = 0
         retvalue = os.system(cmd)
 
         if retvalue != 0:
             print("[Error] Creating the 'at' task gave: " + str(retvalue))
 
 
+# noinspection PyBroadException
 def show_schedule(base_group):
     """Show the queued tasks, using our 'pbatq' script"""
 
@@ -164,6 +166,7 @@ def show_schedule(base_group):
            ))
 
 
+# noinspection PyBroadException,PyBroadException
 def sort_and_print(tasklist):
     try:
         tasks = sorted(tasklist, key=lambda item: item[8])
@@ -193,13 +196,14 @@ def check_recip_addresses(recips):
     for recip in recips:
         if not re.match(r"[^@]+@[^@]+\.[^@]+", recip):
             print("[Error] Sorry, but parameter ", recip,
-                  " doesn't look like a valid email addresss")
+                  " doesn't look like a valid email address")
             sys.exit()
         else:
             print("[OK] Looks like a valid email address: ", recip)
     return
 
 
+# noinspection PyBroadException
 def send_the_report(r, base_group, recips):
     """  Create and send the report, with details as email CSV attachments. """
 
@@ -229,7 +233,7 @@ def send_the_report(r, base_group, recips):
     fromaddr = "phishserver@example.com"
     msg['From'] = "phishserver@example.com"
 
-    #   Leaving "To:" blank simplifies things if we have multiple recipents
+    #   Leaving "To:" blank simplifies things if we have multiple recipients
     msg['To'] = ""
     msg['Subject'] = ("Results from: " + base_group +
                       " phishing awareness campaign")
@@ -253,7 +257,7 @@ def send_the_report(r, base_group, recips):
     body += phish_score
     body += "\n"
     body += "Spear phishing: "
-    body += "\n\nThese staff were targetted:\n\n"
+    body += "\n\nThese staff were targeted:\n\n"
 
     for target in sp_targets:
         body += "\t" + target["first_name"] + " " + target["last_name"]

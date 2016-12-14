@@ -7,8 +7,8 @@
         these have been added in a regular way by our scripts.
 
         But the 'spear' groups like ACME0816-spear-1 have been added
-        manually so are not cleaned up, unless secified (as in
-        'pbcleanup ACME0816-spear' - which will delete all gropus and
+        manually so are not cleaned up, unless specified (as in
+        'pbcleanup ACME0816-spear' - which will delete all groups and
         campaigns with that string in their name).
 """
 
@@ -29,7 +29,6 @@ def main():
             "\n e.g pbcleanup MOFF16  \n"
         )
     base_group = sys.argv[1]
-    target_group = sys.argv[1]
 
     # get list of groups from the server
     #
@@ -41,11 +40,11 @@ def main():
     #
     found = False
     for group in groups:
-        if group["name"] == target_group:
-            print("Found target group: ", target_group)
+        if group["name"] == base_group:
+            print("Found target group: ", base_group)
             found = True
     if not found:
-        exit_msg = "[Error] target group: '" + target_group + "' not found."
+        exit_msg = "[Error] target group: '" + base_group + "' not found."
         sys.exit(exit_msg)
 
     # ...and delete 'em - 
@@ -53,8 +52,8 @@ def main():
     #
     deleted = 0
     for group in groups:
-        if (target_group in group["name"]) and \
-                (target_group != group["name"]) and \
+        if (base_group in group["name"]) and \
+                (base_group != group["name"]) and \
                 ("-spear-" not in group["name"]):
             delete_group(group["id"], group["name"])
             deleted += 1
@@ -71,7 +70,7 @@ def main():
 
     deleted = 0
     for camp in campaigns:
-        if target_group in camp["name"]:
+        if base_group in camp["name"]:
             delete_camp(camp["id"], camp["name"])
             deleted += 1
     if deleted > 0:
@@ -82,8 +81,7 @@ def main():
     # We won't try to automate this for now...
     # 
     print("\nYou may also need to manually kill any queued tasks with: 'pbkill ",
-          target_group, "'", sep = "")  # ------------ end of main() ----------------------------
-
+          base_group, "'", sep="")  # ------------ end of main() ----------------------------
 
     if __name__ == '__main__':
         sys.exit(main())
