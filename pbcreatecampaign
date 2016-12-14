@@ -16,7 +16,7 @@ def main():
     from pbsettings import PHISH_MASTER, EMAIL_FROM
     from pbgophish import create_camp
 
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 7:
         sys.exit(
             "\n Usage: pbcreatecampaign <name> <template> <page> <url> <smtp> <groups>"
             "\n "

@@ -83,5 +83,5 @@ def main():
     print("\nYou may also need to manually kill any queued tasks with: 'pbkill ",
           base_group, "'", sep="")  # ------------ end of main() ----------------------------
 
-    if __name__ == '__main__':
-        sys.exit(main())
+if __name__ == '__main__':
+    sys.exit(main())

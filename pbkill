@@ -13,8 +13,9 @@ TODO:
 import re
 import sys
 import subprocess
-
-
+from pbgophish import get_at_jobs
+from pbgophish import group_name
+from pbgophish import kill_job 
 def main():
     if len(sys.argv) < 2:
         sys.exit(
@@ -33,34 +34,12 @@ def main():
         if base_group in group_name(job):
             found += 1
             kill_job(job)
-            print("[OK] Killed job ", job, "(", group_name(job), ")")
+            print("[OK] Killed job ", job)
     if found:
         print("\nKilled ", found, "tasks")
     else:
         print("\nNo matching tasks found")
 
 
-# ------- supporting functions are defined below -------------------------
-
-def get_at_jobs():
-    cmd = "atq | cut -f1 "
-    output = subprocess.check_output(cmd, shell=True)
-    list_of_at_jobs = re.split("\n", (str(output)))
-    del list_of_at_jobs[-1]
-    return list_of_at_jobs
-
-
-def group_name(job):
-    cmd = 'at -c ' + job + ' | tail -2| head -1| cut -f 2 -d" "'
-    base_name = str(subprocess.check_output(cmd, shell=True))
-    return base_name
-
-
-def kill_job(job):
-    cmd = 'atrm ' + job
-    subprocess.check_output(cmd, shell=True)
-    return
-
-
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main()) 
