@@ -186,6 +186,7 @@ def check_spear_templates(base_group, spears):
     full_url = URL + "/api/templates"
     resp = requests.get(full_url, params=GOPHISH_KEY)
     templates = resp.json()
+    sp_name = ""
     for spear in range(spears):
         missing = True
         for template in enumerate(templates):

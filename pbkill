@@ -10,12 +10,13 @@ TODO:
     - fix some repeating weirdness...
 
 """
-import re
 import sys
-import subprocess
+
 from pbgophish import get_at_jobs
 from pbgophish import group_name
-from pbgophish import kill_job 
+from pbgophish import kill_job
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(
@@ -42,4 +43,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main()) 
+    sys.exit(main())

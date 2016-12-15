@@ -51,9 +51,6 @@ def main():
 
     sort_and_print(clean_tasks)
 
-
-# end of main()
-
 # ------- supporting functions are defined below -------------------------
 
 def get_at_tasks():

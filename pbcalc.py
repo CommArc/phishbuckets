@@ -11,14 +11,12 @@ def calc_timestamp(task):
     import calendar
 
     dd = task[3].zfill(2)
-    # noinspection PyPep8Naming
-    MMM = task[2]
+    mmm = task[2]
     tttt = task[4]
-    # noinspection PyPep8Naming
-    YYYY = task[5]
+    yyyy = task[5]
     months = {v: k for k, v in enumerate(calendar.month_abbr)}
-    mm = str(months[MMM]).zfill(2)
-    timestamp = str(YYYY) + "-" + str(mm) + "-" + dd + " " + str(tttt)
+    mm = str(months[mmm]).zfill(2)
+    timestamp = str(yyyy) + "-" + str(mm) + "-" + dd + " " + str(tttt)
     return timestamp
 
 
@@ -46,7 +44,6 @@ def check_date(start_date):
         return start
 
 
-# noinspection PyBroadException
 def split_and_check(mailshot_data):
     """Split the text, returning them as a list. Fatal exit if any problems"""
 
