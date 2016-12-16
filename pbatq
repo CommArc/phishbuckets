@@ -30,7 +30,6 @@ import sys
 
 # noinspection PyBroadException
 def main():
-
     at_tasks = get_at_tasks()
     clean_tasks = []
     # print("at_tasks: ", at_tasks)
@@ -50,6 +49,7 @@ def main():
             print("\nSkipped 'at' job #: ", task[0], " - something odd with this!\n")
 
     sort_and_print(clean_tasks)
+
 
 # ------- supporting functions are defined below -------------------------
 

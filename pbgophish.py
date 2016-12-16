@@ -74,7 +74,6 @@ def get_at_jobs():
 
 
 def group_name(job):
-
     import subprocess
     cmd = 'at -c ' + job + ' | tail -2| head -1| cut -f 2 -d" "'
     base_name = str(subprocess.check_output(cmd, shell=True))
@@ -82,7 +81,6 @@ def group_name(job):
 
 
 def kill_job(job):
-
     import subprocess
     cmd = 'atrm ' + job
     subprocess.check_output(cmd, shell=True)
@@ -466,7 +464,7 @@ def get_results():
                       ", ", result["status"], file=f1)
                 #   and we keep a tally of the sucessful 'phishes'...
                 if result["status"] == "Success":
-                        phishes_clicked[camp["template"]["subject"]] += 1
+                    phishes_clicked[camp["template"]["subject"]] += 1
                 camp_list.append(camp)
 
     f1.close()
@@ -492,12 +490,12 @@ def get_results():
         if not sp_found:
             break  # because we've found all that matter
 
-        #   ...and then the results
+            #   ...and then the results
     # noinspection PyAssignmentToLoopOrWithParameter
 
     for num in range(10):
         for camp in campaigns:
-            if target_group + '-spear-' +str(num) in camp["name"]:
+            if target_group + '-spear-' + str(num) in camp["name"]:
                 print("[OK] Processing ", camp["name"])
                 sp_num_of_staff += 1  # cos only one user per spear campaign
                 print("DEBUG: ", camp["name"], sp_num_of_staff)

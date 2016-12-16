@@ -54,7 +54,8 @@ def split_and_check(mailshot_data):
     # Check 'mailshotdata', a single string like this:
     #
     #    "28/11/2016 16:15 http://dropbox.secserv.kr/0098098.jpg"
-    
+
+    # noinspection PyBroadException
     try:
         date = mailshot_data.split()[0]
         time = mailshot_data.split()[1]
