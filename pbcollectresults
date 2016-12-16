@@ -30,7 +30,14 @@ def main():
         recips.append(sys.argv[param])
     check_recip_addresses(recips)
     select_the_group(base_group)
+    r = {}
     r = get_results()
+
+    #  DEBUGGER!!
+    #  'r' should be a dict 
+    #  print("pbcr", type(r))
+    #  print("pbcr", r)
+
     send_the_report(r, base_group, recips)
 
 

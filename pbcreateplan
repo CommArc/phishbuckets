@@ -102,10 +102,13 @@ def schedule_collect_results(start_date, base_group):
     #   We collect the results at 4:30pm on the Friday,
     #   11 days after the starting Monday.
     #
+    import os
+
     mailshot_date = datetime.datetime.strptime(start_date, '%d/%m/%Y')
     mailshot_date += datetime.timedelta(days=11)
     shot_time = "16:30"
-    cmd = 'echo /usr/local/bin/pbcollectresults' + \
+    script_path = os.path.abspath(os.path.dirname(__file__))
+    cmd = 'echo ' + script_path + '/pbcollectresults' + \
           ' "\'' + \
           base_group + \
           '\'" "\'' + \

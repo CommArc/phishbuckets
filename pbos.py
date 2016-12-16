@@ -85,7 +85,8 @@ def schedule_mailshots(base_group, start_date, phish_set, sched_name):
 
         # Backslashes so that the "at" command line is properly quoted,
         # and 'shot%10' because there are just 10 defined 'phishes'
-        cmd = 'echo /usr/local/bin/pbcreatecampaign  ' + \
+        script_path = os.path.abspath(os.path.dirname(__file__))
+        cmd = 'echo ' + script_path + '/pbcreatecampaign  ' + \
               '"\'AUTO-' + base_group + '-' + str(shot) + '\'" "\'' + \
               phishes[shot % 10][0] + '\'" ' + \
               '"\'Scare page - ' + base_group + '\'" "\'' + \
@@ -124,7 +125,8 @@ def schedule_spear_mailshots(base_group, spear_names, mailshot_data_items):
         ISO_date = datetime.datetime.strftime(dt_date, "%Y-%m-%d")
 
         # Tricky backslashing needed for the "at" command line to work
-        cmd = 'echo /usr/local/bin/pbcreatecampaign  ' + \
+        script_path = os.path.abspath(os.path.dirname(__file__))
+        cmd = 'echo ' + script_path + '/pbcreatecampaign  ' + \
               '"\'' + \
               spear_name + '\'" "\'' + \
               spear_name + '\'" ' + \
