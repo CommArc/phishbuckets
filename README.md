@@ -44,7 +44,7 @@ may not be for you...
     according to plan in other environments. Any problems, raise a bug issue.
 
 At the time this work was begun, 'gophish' had no ability to schedule campaigns.
-Now that it does, it makes senses to transition these scripts to use that feature
+Now that it does, it makes sense to transition these scripts to use that feature
 but that will take some extra work...
 
 ## Installation
