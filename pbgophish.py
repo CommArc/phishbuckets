@@ -442,11 +442,28 @@ def get_results():
                 print("Campaign, Date, Time, Email, Action", file=f2)
                 found = True
             for event in camp["timeline"]:
+                #
+                #  'events' are structured like this: 
+                #
+                #   "time": atimedate, 
+                #   "Message": "Clicked", 
+                #   "Email"; "abc@exaple.com",
+                #   "Details: {
+                #       "Payload": {
+                #           "rid": ["afe4343..5sff"],
+                #           "Browser": {
+                #               "Address": "202.202.202.222",
+                #               "UserAgent": "Mozilla ....Mac OS X...Safari/602.3.12"
+                #
+
                 #   Note the slicing of the ISO 8601 date/time into two fields
                 print(camp["name"], ", ", event["time"][0:10], ", ",
                       event["time"][11:16], ", ", event["email"], ", ",
                       event["message"], file=f2)
                 if event["message"] == "Clicked Link":
+                    # TODO Check for "Mac OS X" in UserAgent, and exclude them, 
+                    #   because of web link preview feature of Apple:Mail...
+
                     each_click.append(event["email"])
 
             for result in camp["results"]:
