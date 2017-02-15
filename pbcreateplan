@@ -20,7 +20,7 @@ from pbgophish import (
     check_scare_page, create_sub
 )
 from pbos import show_schedule, schedule_mailshots
-
+from pbsettings import PHISH_MASTER
 
 def main():
     if len(sys.argv) < 5:
@@ -111,7 +111,7 @@ def schedule_collect_results(start_date, base_group):
           ' "\'' + \
           base_group + \
           '\'" "\'' + \
-          'snori74@example.com' + \
+          PHISH_MASTER + \
           '\'" ' + \
           '| at   -v  ' + \
           shot_time + \
