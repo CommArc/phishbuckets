@@ -84,7 +84,9 @@ def schedule_mailshots(base_group, start_date, phish_set, sched_name):
             shot_time = mailshot_time[shot][1]
 
         # Backslashes so that the "at" command line is properly quoted,
-        # and 'shot%10' because there are just 10 defined 'phishes'
+        # The 'shot % 10' is because phishes.json includes named 'sets' of
+        # ten defined 'phishes'. If just five are required for a particular
+        # engagement, then they can be doubled up to make a set of 10.
         script_path = os.path.abspath(os.path.dirname(__file__))
         cmd = 'echo ' + script_path + '/pbcreatecampaign  ' + \
               '"\'AUTO-' + base_group + '-' + str(shot) + '\'" "\'' + \
