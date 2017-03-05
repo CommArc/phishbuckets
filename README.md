@@ -1,6 +1,6 @@
 # Phishbuckets
 
-_Forcc use with 'gophish' from Jordan Wright_
+_For use with 'gophish' from Jordan Wright_
 
 (Note: This is a work in progress - and 'gophish' itself is only v0.2.0)
 
