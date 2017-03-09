@@ -25,10 +25,10 @@ from pbsettings import PHISH_MASTER
 def main():
     if len(sys.argv) < 5:
         sys.exit(
-            "\n Usage: create-plan <group> <start-date> <phish_set> <sched_name>"
+            "\n Usage: pbcreateplan <group> <start-date> <phish_set> <sched_name>"
             "\n "
-            "\n e.g     create-plan ACME0816 15/5/2017 SECOND blaster"
-            "\n         create-plan ACME0816 now SECOND"
+            "\n e.g     pbcreateplan ACME0816 15/5/2017 SECOND blaster"
+            "\n         pbcreateplan ACME0816 now SECOND"
             "\n         (if we chose 'now', we don't need a schedule)"
             "\n "
         )

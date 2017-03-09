@@ -2,7 +2,6 @@
 #   pbcalc.py - various functions to calculate stuff...
 #
 
-
 def calc_timestamp(task):
     """
         Take text output from the Linux 'atq' command and return an
