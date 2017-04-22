@@ -41,6 +41,7 @@ def main():
 
     #   Check that everything is OK
     check_date(start_date)
+    # check_config #(API key etc)
     base_group_object = check_group(base_group)
     phishes = get_phishes(phish_set)
     get_mailshot_time(sched_name)

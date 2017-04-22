@@ -42,12 +42,10 @@ def check_group(base_group):
     full_url = URL + "/api/groups"
     resp = requests.get(full_url, params=GOPHISH_KEY)
     groups = resp.json()
-    # print(type_groups)
-    # print(groups)
     found = False
 
     for group in groups:
-        # print(group)
+        print("DEBUGGER: ", group)
         if group["name"] == base_group:
             found = True
             base_group_object = group
@@ -389,6 +387,7 @@ def get_results():
     from pbsettings import GOPHISH_KEY, URL
     import requests
     import tempfile
+    import ast  # 'Abstract Syntax Trees
     import os
     import sys
     from collections import defaultdict
@@ -446,27 +445,44 @@ def get_results():
                 #  'events' are structured like this: 
                 #
                 #   "time": atimedate, 
-                #   "Message": "Clicked", 
-                #   "Email"; "abc@exaple.com",
-                #   "Details: {
-                #       "Payload": {
+                #   "message": "Clicked", 
+                #   "email"; "abc@exaple.com",
+                #   "details: {
+                #       "payload": {
                 #           "rid": ["afe4343..5sff"],
-                #           "Browser": {
-                #               "Address": "202.202.202.222",
-                #               "UserAgent": "Mozilla ....Mac OS X...Safari/602.3.12"
+                #           "browser": {
+                #               "address": "202.202.202.222",
+                #               "userAgent": "Mozilla ....Mac OS X...Safari/602.3.12"
                 #
 
                 #   Note the slicing of the ISO 8601 date/time into two fields
+                print("DEBUGGER44: ", type(event["details"]))
+                details = ast.literal_eval(event["details"])
                 print(camp["name"], ", ", event["time"][0:10], ", ",
                       event["time"][11:16], ", ", event["email"], ", ",
-                      event["message"], file=f2)
+                      event["message"], details["payload"]["browser"]["address"], file=f2)
+                print('DEBUGGERi22: ', camp["name"], event)
                 if event["message"] == "Clicked Link":
                     # TODO Check for "Mac OS X" in UserAgent, and exclude them, 
                     #   because of web link preview feature of Apple:Mail...
-
                     each_click.append(event["email"])
 
             for result in camp["results"]:
+		# 
+		# format of the results...
+		#	"results": [ 
+		#	{
+		#	"id": "4408fd5bc60901c35e7352f0205282d26b27a9fc80bdd6ee4db4a6f87c1954bb",
+		#	"email": "bjenius@morningcatch.ph",
+		#	"first_name": "Boyd",
+		#	"last_name": "Jenius",
+		#	"position": "",
+		#	"status": "Success",
+		#	"ip": "x.x.x.x",
+		#	"latitude": 0,
+		#	"longitude": 0
+		#	}
+		#	]
                 #   Note the slicing of the ISO 8601 date/time into two fields
                 print(camp["name"],
                       ", ", camp["created_date"][0:10],
@@ -479,6 +495,7 @@ def get_results():
                       ", ", result["first_name"],
                       ", ", result["last_name"],
                       ", ", result["status"], file=f1)
+                print('DEBUGGER: ', camp["name"], result)
                 #   and we keep a tally of the sucessful 'phishes'...
                 if result["status"] == "Success":
                     phishes_clicked[camp["template"]["subject"]] += 1
