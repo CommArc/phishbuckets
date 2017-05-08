@@ -144,6 +144,31 @@ def delete_camp(camp_id, name):
         sys.exit()
     return
 
+def dump_camp(name):
+    """Dump a campaign, by its name."""
+    #TODO fix this up so it does something useful...
+    from pbsettings import GOPHISH_KEY, URL
+    import requests
+    import sys
+    headers = {'content-type': 'application/json'}
+    full_url = URL + "/api/campaigns"
+    resp = requests.get(full_url, params=GOPHISH_KEY)
+    campaigns = resp.json()
+
+    dumped = 0
+    for camp in campaigns:
+        print(type(name), type(camp["name"]))
+        print('DEBUG22: ', camp["name"], camp["launch_date"])
+        if name == camp["name"]:
+            print(camp["name"], camp["launch_date"])
+            dumped += 1
+    if dumped > 0:
+        print("[OK] Dumped ", dumped, " campaigns")
+    else:
+        print("[Error] No campaigns found to dump")
+    return
+
+
 
 def check_templates(phishes):
     """Check that the templates exist."""
@@ -456,7 +481,7 @@ def get_results():
                 #
 
                 #   Note the slicing of the ISO 8601 date/time into two fields
-                print("DEBUGGER44: ", type(event["details"]))
+                # print("DEBUGGER44: ", type(event["details"]))
                 details = ast.literal_eval(event["details"])
                 print(camp["name"], ", ", event["time"][0:10], ", ",
                       event["time"][11:16], ", ", event["email"], ", ",
@@ -497,7 +522,7 @@ def get_results():
                       ", ", result["status"], file=f1)
                 print('DEBUGGER: ', camp["name"], result)
                 #   and we keep a tally of the sucessful 'phishes'...
-                if result["status"] == "Success":
+                if result["status"] == "Clicked Link":
                     phishes_clicked[camp["template"]["subject"]] += 1
                 camp_list.append(camp)
 
