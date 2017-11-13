@@ -446,8 +446,8 @@ def get_results():
     sp_targets = []  # those who were sent a spear-phish
 
     td = tempfile.gettempdir()
-    mail_out1 = os.path.join(td, target_group + '-raw-events.csv')
-    mail_out2 = os.path.join(td, target_group + '-mail-outs.csv')
+    mail_out1 = os.path.join(td, target_group + '-results-summary.csv')
+    mail_out2 = os.path.join(td, target_group + '-full-timeline.csv')
     mail_out3 = os.path.join(td, target_group + '-spear-events.csv')
     mail_out4 = os.path.join(td, target_group + '-spear-outs.csv')
 
