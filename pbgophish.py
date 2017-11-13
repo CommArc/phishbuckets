@@ -45,7 +45,7 @@ def check_group(base_group):
     found = False
 
     for group in groups:
-        print("DEBUGGER: ", group)
+        # print("DEBUGGER: ", group)
         if group["name"] == base_group:
             found = True
             base_group_object = group
@@ -158,7 +158,7 @@ def dump_camp(name):
     dumped = 0
     for camp in campaigns:
         print(type(name), type(camp["name"]))
-        print('DEBUG22: ', camp["name"], camp["launch_date"])
+        # print('DEBUG22: ', camp["name"], camp["launch_date"])
         if name == camp["name"]:
             print(camp["name"], camp["launch_date"])
             dumped += 1
@@ -499,10 +499,10 @@ def get_results():
                 # print("DEBUGGER44: ", type(event["details"]))
                 details = event["details"]
                 #DEBUG
-                print('DEBUG: event = ', event)
+                # print('DEBUG: event = ', event)
                 if not details == '':
                         details = ast.literal_eval(details)
-                print('DEBUG: details = ', details, ' which is a ', type(details), '\n')
+                # print('DEBUG: details = ', details, ' which is a ', type(details), '\n')
                 if not details == '':
                         details = ast.literal_eval(str(details))
                         print(camp["name"], ', ', event["time"][0:10], ', ',
@@ -555,7 +555,7 @@ def get_results():
                       '", "', result["longitude"],'"',
                       file=f1)
 
-                print('DEBUGGER: ', camp["name"], result)
+                # print('DEBUGGER: ', camp["name"], result)
                 #   and we keep a tally of the sucessful 'phishes'...
                 if result["status"] == "Clicked Link":
                     phishes_clicked[camp["template"]["subject"]] += 1
@@ -592,7 +592,7 @@ def get_results():
             if target_group + '-spear-' + str(num) in camp["name"]:
                 print("[OK] Processing ", camp["name"])
                 sp_num_of_staff += 1  # cos only one user per spear campaign
-                print("DEBUG: ", camp["name"], sp_num_of_staff)
+                # print("DEBUG: ", camp["name"], sp_num_of_staff)
                 if not sp_found:
                     f3 = open(mail_out3, 'w')
                     f4 = open(mail_out4, 'w')

@@ -362,8 +362,10 @@ def send_the_report(r, base_group, recips):
     #   there were no spear phishes done, so no corresponding file.
 
 
-    #DEBUG  Don't delete the files, handy to have a copy for debugging
-    pass #  This should skip all the logic below for now
+    #DEBUG  *Actually*, for now let's don't delete the files, handy to have a
+    # copy for debugging locally on the dev machine
+    pass 
+    #  This should skip all the logic below for now
 
 
     # try:
