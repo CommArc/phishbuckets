@@ -363,11 +363,21 @@ def select_the_group(base_group):
     import sys
 
     full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
-    if not (resp.status_code == 200):
-        print("[Error] The API lookup of groups gave a",
-              resp.status_code, "return code")
-        sys.exit("[Error] Something appears to have gone wrong.\n")
+    try:
+        resp = requests.get(full_url, params=GOPHISH_KEY)
+        if not (resp.status_code == 200):
+            print("[Error] The API lookup of groups gave a",
+            resp.status_code, "return code")
+            sys.exit("[Error] Something appears to have gone wrong.\n")
+    except requests.exceptions.Timeout:
+        print("[Error] Connection to server timed out!")
+        sys.exit(1)
+    except requests.exceptions.TooManyRedirects:
+        print("[Error] Too many redirects")
+        sys.exit(1)
+    except requests.exceptions.RequestException as e:
+        print("[Error] Big problems... error:", e)
+        sys.exit(1)
 
     groups = resp.json()
     found = False
@@ -412,9 +422,9 @@ def get_results():
     from pbsettings import GOPHISH_KEY, URL
     import requests
     import tempfile
-    import ast  # 'Abstract Syntax Trees
     import os
     import sys
+    import ast      # abstract syntact trees
     from collections import defaultdict
 
     target_group = sys.argv[1]
@@ -422,6 +432,7 @@ def get_results():
     full_url = URL + "/api/campaigns"
     resp = requests.get(full_url, params=GOPHISH_KEY)
     campaigns = resp.json()
+
     #   Variables with 'sp_' are related to the spear-phishes,
     #   while the others are for the general AUTO- campaigns...
     camp_list = []
@@ -452,19 +463,22 @@ def get_results():
             num_of_targets = len(group["targets"])
 
     # PART I
-    #
-    """First we look for the main campaign data"""
+    """Open the output files, and write headers to them..."""
+
     f1 = open(mail_out1, 'w')
+    print('"Campaign", "CreatedDate", "CreatedTime", "CompletedDate",',
+            '"CompletedTime", "From", "Subject", "Mail", "First", "Last",',
+            '"Status", "ip", "latitude", longitude"',
+            file=f1)
+
     f2 = open(mail_out2, 'w')
+    print('"Campaign", "Date", "Time", "Email", "Action", "IP", "User Agent"',
+            file=f2)
+
+    
     for camp in campaigns:
         if "AUTO-" + target_group in camp["name"]:
             print("[OK] Processing ", camp["name"])
-            if not found:
-                print("Campaign, Created_date, Created_time, Completed_date",
-                      "Completed_time, From, Subject, Mail, First, Last",
-                      "Status", file=f1)  # header line for f1
-                print("Campaign, Date, Time, Email, Action", file=f2)
-                found = True
             for event in camp["timeline"]:
                 #
                 #  'events' are structured like this: 
@@ -475,18 +489,34 @@ def get_results():
                 #   "details: {
                 #       "payload": {
                 #           "rid": ["afe4343..5sff"],
-                #           "browser": {
+                #       "browser": {
                 #               "address": "202.202.202.222",
-                #               "userAgent": "Mozilla ....Mac OS X...Safari/602.3.12"
+                #               "user-agent": "Mozilla ....Mac OS X...Safari/602.3.12"
                 #
-
-                #   Note the slicing of the ISO 8601 date/time into two fields
+                # ...but note that "details" can be a blank string...
+                #
+                # Note the slicing of the ISO 8601 date/time into two fields
                 # print("DEBUGGER44: ", type(event["details"]))
-                details = ast.literal_eval(event["details"])
-                print(camp["name"], ", ", event["time"][0:10], ", ",
-                      event["time"][11:16], ", ", event["email"], ", ",
-                      event["message"], details["payload"]["browser"]["address"], file=f2)
-                print('DEBUGGERi22: ', camp["name"], event)
+                details = event["details"]
+                #DEBUG
+                print('DEBUG: event = ', event)
+                if not details == '':
+                        details = ast.literal_eval(details)
+                print('DEBUG: details = ', details, ' which is a ', type(details), '\n')
+                if not details == '':
+                        details = ast.literal_eval(str(details))
+                        print(camp["name"], ', ', event["time"][0:10], ', ',
+                            event["time"][11:16], ', "', event["email"], '" , "',
+                        event["message"], '" , "',details["browser"]["address"],
+                            '", "', details["browser"]["user-agent"], '"',
+                        file=f2)
+                else:
+                    print(camp["name"], ', ', event["time"][0:10], ', ',
+                        event["time"][11:16], ', "', event["email"], '", "',
+                        event["message"], '", "", "", ""',
+                        file=f2)
+
+                    # print('DEBUGGERi22: ', camp["name"], event)
                 if event["message"] == "Clicked Link":
                     # TODO Check for "Mac OS X" in UserAgent, and exclude them, 
                     #   because of web link preview feature of Apple:Mail...
@@ -510,16 +540,21 @@ def get_results():
 		#	]
                 #   Note the slicing of the ISO 8601 date/time into two fields
                 print(camp["name"],
-                      ", ", camp["created_date"][0:10],
-                      ", ", camp["created_date"][11:16],
-                      ", ", camp["completed_date"][0:10],
-                      ", ", camp["completed_date"][11:16],
-                      ", ", camp["smtp"]["from_address"],
-                      ", ", camp["template"]["subject"],
-                      ", ", result["email"],
-                      ", ", result["first_name"],
-                      ", ", result["last_name"],
-                      ", ", result["status"], file=f1)
+                      ', ', camp["created_date"][0:10],
+                      ', ', camp["created_date"][11:16],
+                      ', ', camp["completed_date"][0:10],
+                      ', ', camp["completed_date"][11:16],
+                      ', "', camp["smtp"]["from_address"],
+                      '", "', camp["template"]["subject"],
+                      '", "', result["email"],
+                      '", "', result["first_name"],
+                      '", "', result["last_name"],
+                      '", "', result["status"],
+                      '", "', result["ip"],
+                      '", "', result["latitude"],
+                      '", "', result["longitude"],'"',
+                      file=f1)
+
                 print('DEBUGGER: ', camp["name"], result)
                 #   and we keep a tally of the sucessful 'phishes'...
                 if result["status"] == "Clicked Link":

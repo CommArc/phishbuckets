@@ -360,19 +360,25 @@ def send_the_report(r, base_group, recips):
     # Remove the files now that we've sent them, and don't
     #   crash out if one is missing for some reason - e.g. if
     #   there were no spear phishes done, so no corresponding file.
-    try:
-        os.remove(mail_out1)
-    except FileNotFoundError:
-        pass
-    try:
-        os.remove(mail_out2)
-    except FileNotFoundError:
-        pass
-    try:
-        os.remove(mail_out3)
-    except FileNotFoundError:
-        pass
-    try:
-        os.remove(mail_out4)
-    except FileNotFoundError:
-        pass
+
+
+    #DEBUG  Don't delete the files, handy to have a copy for debugging
+    pass #  This should skip all the logic below for now
+
+
+    # try:
+    #    os.remove(mail_out1)
+    # except FileNotFoundError:
+    #    pass
+    # try:
+    #    os.remove(mail_out2)
+    # except FileNotFoundError:
+    #    pass
+    # try:
+    #    os.remove(mail_out3)
+    # except FileNotFoundError:
+    #    pass
+    # try:
+    #    os.remove(mail_out4)
+    # except FileNotFoundError:
+    #    pass
