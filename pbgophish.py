@@ -45,7 +45,6 @@ def check_group(base_group):
     found = False
 
     for group in groups:
-        # print("DEBUGGER: ", group)
         if group["name"] == base_group:
             found = True
             base_group_object = group
@@ -158,7 +157,6 @@ def dump_camp(name):
     dumped = 0
     for camp in campaigns:
         print(type(name), type(camp["name"]))
-        # print('DEBUG22: ', camp["name"], camp["launch_date"])
         if name == camp["name"]:
             print(camp["name"], camp["launch_date"])
             dumped += 1
@@ -183,9 +181,7 @@ def check_templates(phishes):
 
     for phish in phishes:
         missing = True
-        # print("DEBUG: Looking for ", phish[0])
         for template in enumerate(templates):
-            # print("DEBUG: Looking at: ", dict(template[1])["name"])
             if dict(template[1])["name"] == phish[0]:
                 # print("Found: ", phish[0])
                 missing = False
@@ -416,6 +412,19 @@ def get_mailshot_data(spear_name):
     # noinspection PyShadowingNames
 
 
+
+def local_time(ISO_datestring):
+    """Converts ISO datastring to local date string"""
+
+    from datetime import datetime
+    from dateutil import tz
+    import dateutil.parser
+
+    from_zone = tz.gettz('UTC')
+    to_zone = tz.gettz('Pacific/Auckland')
+    ISO_date = dateutil.parser.parse(ISO_datestring)
+    return str(ISO_date.astimezone(to_zone))
+
 def get_results():
     """Find matching campaigns, and produce two report files."""
 
@@ -426,6 +435,10 @@ def get_results():
     import sys
     import ast      # abstract syntact trees
     from collections import defaultdict
+    
+    from datetime import datetime
+    from dateutil import tz
+    import dateutil.parser
 
     target_group = sys.argv[1]
 
@@ -448,8 +461,8 @@ def get_results():
     td = tempfile.gettempdir()
     mail_out1 = os.path.join(td, target_group + '-results-summary.csv')
     mail_out2 = os.path.join(td, target_group + '-full-timeline.csv')
-    mail_out3 = os.path.join(td, target_group + '-spear-events.csv')
-    mail_out4 = os.path.join(td, target_group + '-spear-outs.csv')
+    mail_out3 = os.path.join(td, target_group + '-spear-results-summary.csv')
+    mail_out4 = os.path.join(td, target_group + '-spear-full-timeline.csv')
 
     # PART 0
     #
@@ -475,7 +488,7 @@ def get_results():
     print('"Campaign", "Date", "Time", "Email", "Action", "IP", "User Agent"',
             file=f2)
 
-    
+
     for camp in campaigns:
         if "AUTO-" + target_group in camp["name"]:
             print("[OK] Processing ", camp["name"])
@@ -495,28 +508,31 @@ def get_results():
                 #
                 # ...but note that "details" can be a blank string...
                 #
-                # Note the slicing of the ISO 8601 date/time into two fields
-                # print("DEBUGGER44: ", type(event["details"]))
+                #   timedate from the API is in UTC, which we'll convert
+                #   to our local zone...
+
                 details = event["details"]
-                #DEBUG
-                # print('DEBUG: event = ', event)
-                if not details == '':
-                        details = ast.literal_eval(details)
-                # print('DEBUG: details = ', details, ' which is a ', type(details), '\n')
                 if not details == '':
                         details = ast.literal_eval(str(details))
-                        print(camp["name"], ', ', event["time"][0:10], ', ',
-                            event["time"][11:16], ', "', event["email"], '" , "',
-                        event["message"], '" , "',details["browser"]["address"],
-                            '", "', details["browser"]["user-agent"], '"',
+                        datetime = local_time(event["time"])
+                        print('"' + camp["name"] +
+                              '", ' + datetime[0:10] +
+                              ', ' +  datetime[11:16] +
+                              ', "' + event["email"] +
+                              '" , "' + event["message"] +
+                              '" , "' + details["browser"]["address"] +
+                              '", "' +  details["browser"]["user-agent"].replace(',', '.') + '"',
                         file=f2)
                 else:
-                    print(camp["name"], ', ', event["time"][0:10], ', ',
-                        event["time"][11:16], ', "', event["email"], '", "',
-                        event["message"], '", "", "", ""',
+                    datetime = local_time(event["time"])
+                    print('"' + camp["name"] +
+                          '", ' + datetime[0:10] +
+                          ', ' + datetime[11:16] +
+                          ', "' + event["email"] +
+                          '", "' + event["message"]+
+                          '", "", "" ',
                         file=f2)
 
-                    # print('DEBUGGERi22: ', camp["name"], event)
                 if event["message"] == "Clicked Link":
                     # TODO Check for "Mac OS X" in UserAgent, and exclude them, 
                     #   because of web link preview feature of Apple:Mail...
@@ -539,23 +555,26 @@ def get_results():
 		#	}
 		#	]
                 #   Note the slicing of the ISO 8601 date/time into two fields
-                print(camp["name"],
-                      ', ', camp["created_date"][0:10],
-                      ', ', camp["created_date"][11:16],
-                      ', ', camp["completed_date"][0:10],
-                      ', ', camp["completed_date"][11:16],
-                      ', "', camp["smtp"]["from_address"],
-                      '", "', camp["template"]["subject"],
-                      '", "', result["email"],
-                      '", "', result["first_name"],
-                      '", "', result["last_name"],
-                      '", "', result["status"],
-                      '", "', result["ip"],
-                      '", "', result["latitude"],
-                      '", "', result["longitude"],'"',
+                #   ...and the use of '+' to get the double quotes snug up to 
+                #      the values.
+
+                
+                print('"' + camp["name"] +
+                      '", ' + local_time(camp["created_date"])[0:10] +
+                      ', ' + local_time(camp["created_date"])[11:16] +
+                      ', ' + local_time(camp["completed_date"])[0:10] +
+                      ', ' +  local_time(camp["completed_date"])[11:16] +
+                      ', "' + camp["smtp"]["from_address"] +
+                      '", "' + camp["template"]["subject"] +
+                      '", "' + result["email"] +
+                      '", "' + result["first_name"] +
+                      '", "' + result["last_name"] +
+                      '", "' + result["status"] +
+                      '", "' + result["ip"] +
+                      '", "' + str(result["latitude"]) +
+                      '", "' + str(result["longitude"]) + '"',
                       file=f1)
 
-                # print('DEBUGGER: ', camp["name"], result)
                 #   and we keep a tally of the sucessful 'phishes'...
                 if result["status"] == "Clicked Link":
                     phishes_clicked[camp["template"]["subject"]] += 1
@@ -563,6 +582,10 @@ def get_results():
 
     f1.close()
     f2.close()
+
+    # Adding conversion of the full-timeline only to a pretty XLSX file
+    excelout(f2, "/tmp") 
+
     if not found:
         sys.exit("[Error] No general campaigns matching: '" +
                  target_group + "' were found.\n")
@@ -592,7 +615,6 @@ def get_results():
             if target_group + '-spear-' + str(num) in camp["name"]:
                 print("[OK] Processing ", camp["name"])
                 sp_num_of_staff += 1  # cos only one user per spear campaign
-                # print("DEBUG: ", camp["name"], sp_num_of_staff)
                 if not sp_found:
                     f3 = open(mail_out3, 'w')
                     f4 = open(mail_out4, 'w')
@@ -601,6 +623,7 @@ def get_results():
                           "Status", file=f3)  # header line for f3
                     print("Campaign, Date, Time, Email, Action", file=f4)
                     sp_found = True
+
                 for event in camp["timeline"]:
                     # Note the slicing of the ISO 8601 date/time into two fields
                     print(camp["name"], ", ", event["time"][0:10], ", ",
@@ -615,10 +638,10 @@ def get_results():
                 for result in camp["results"]:
                     # Note the slicing of the ISO 8601 date/time into two fields
                     print(camp["name"],
-                          ", ", camp["created_date"][0:10],
-                          ", ", camp["created_date"][11:16],
-                          ", ", camp["completed_date"][0:10],
-                          ", ", camp["completed_date"][11:16],
+                          ", ", local_time(camp["created_date"])[0:10],
+                          ", ", local_time(camp["created_date"])[11:16],
+                          ", ", local_time(camp["completed_date"])[0:10],
+                          ", ", local_time(camp["completed_date"])[11:16],
                           ", ", camp["smtp"]["from_address"],
                           ", ", camp["template"]["subject"],
                           ", ", result["email"],
@@ -633,10 +656,18 @@ def get_results():
     if sp_found:
         f3.close()
         f4.close()
+
+        # Adding conversion of the full-timeline only to a pretty XLSX file
+        excelout(f3, "/tmp") 
+
+
     else:
         # not a fatal problem, so we don't call 'os.exit' for this..
         print("[Error]: No spear-phishing campaigns matching: '" +
               target_group + "' were found.\n")
+
+
+
 
     # Part III - now total everthing up...
 
@@ -667,3 +698,75 @@ def get_results():
     }
 
     return r
+
+
+def excelout( csv_file, outdir):
+    """
+    Produce a nicely readable XLS from the CSV
+
+    """
+    import os
+    import pandas as pd
+    import xlsxwriter
+    csv_file = csv_file.name
+
+    with open(csv_file, 'r') as c:
+        df = pd.read_csv(c, quotechar="'", skipinitialspace=True)
+    #        , header=0, skip_blank_lines=True,
+    #                skipinitialspace=True, encoding='latin-1')
+
+    #   Sort
+    # df = df.sort_values(by=['Date', 'Time'])
+
+    #   Write to .XLSX
+    basename=os.path.basename(csv_file)
+    writer = pd.ExcelWriter(outdir + '/' + basename + '.xlsx',
+                            engine='xlsxwriter')
+    
+    df.to_excel(writer, sheet_name='Sheet1', index=False)  # send df to writer
+    workbook  = writer.book
+    worksheet = writer.sheets['Sheet1']
+
+    #   Define some formatting
+    clicked = workbook.add_format({'bold': True, 'bg_color': 'red' })
+    opened = workbook.add_format({'bold': True, 'bg_color': 'orange'})
+    created = workbook.add_format({'bold': True, 'bg_color': 'yellow'})
+    wide = workbook.add_format({'valign': 'Top', 'text_wrap': True})
+    superwide = workbook.add_format({'valign': 'Top', 'text_wrap': True})
+    centered = workbook.add_format({'align': 'center'})
+    title = workbook.add_format({'bold': True, 'color': 'white', 'bg_color': 'gray'})
+
+    #   Set the row height to double the default
+    worksheet.set_default_row(30)
+
+    #   We can then pass these formats as an optional third parameter to the 
+    #   worksheet.write() method, or optional fourth param to set_column:
+    worksheet.set_column(0, 0, 32, centered) 
+    worksheet.set_column(1, 1, 16, centered) 
+    worksheet.set_column(2, 2, 8, centered) 
+    worksheet.set_column(3, 3, 48, centered ) 
+    worksheet.set_column(4, 4, 20, centered)  
+    worksheet.set_column(5, 5, 20, wide)  
+    worksheet.set_column(6, 6, 60, wide)  
+    # worksheet.set_column(7, 7, 80, superwide)  # set column width
+    # worksheet.set_column(8, 8, 80, superwide)  # set column width
+
+    # Conditional formatting is nice...
+    worksheet.conditional_format('D2:B9999', {'type':     'cell',
+                                            'criteria': '==',
+                                            'value':    '"Clicked Link"',
+                                            'format':   clicked})
+
+    worksheet.conditional_format('D2:B9999', {'type':     'cell',
+                                            'criteria': '==',
+                                            'value':    '"Email Opened"',
+                                            'format':   opened})
+
+    worksheet.conditional_format('D2:B9999', {'type':     'cell',
+                                            'criteria': '==',
+                                            'value':    '"Campaign Created"',
+                                            'format':   created})
+    writer.save()
+    writer.close()
+    return
+

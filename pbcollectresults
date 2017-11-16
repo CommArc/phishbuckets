@@ -25,13 +25,19 @@ def main():
         )
 
     base_group = sys.argv[1]
+
+    #   Grab the email recipient addresses...
     recips = []
     for param in range(2, len(sys.argv)):
         recips.append(sys.argv[param])
+    #   ...and check that they look valid
     check_recip_addresses(recips)
+
+    #   Now grab the results data 
     select_the_group(base_group)
     r = get_results()
 
+    #   .and send of the report.
     send_the_report(r, base_group, recips)
 
 
