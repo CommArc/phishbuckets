@@ -718,11 +718,19 @@ def excelout( csv_file, outdir):
     #   Sort
     # df = df.sort_values(by=['Date', 'Time'])
 
+    #   Strip *all* quotes off data items...
+    df = df.apply(lambda x: x.str.strip('"'))
+    df.columns = df.columns.str.strip('"')
+    df = df.apply(lambda x: x.str.strip('"'))
+    df.columns = df.columns.str.strip('"')
+
+
+
     #   Write to .XLSX
     basename=os.path.basename(csv_file)
     writer = pd.ExcelWriter(outdir + '/' + basename + '.xlsx',
                             engine='xlsxwriter')
-    
+
     df.to_excel(writer, sheet_name='Sheet1', index=False)  # send df to writer
     workbook  = writer.book
     worksheet = writer.sheets['Sheet1']
@@ -752,19 +760,20 @@ def excelout( csv_file, outdir):
     # worksheet.set_column(8, 8, 80, superwide)  # set column width
 
     # Conditional formatting is nice...
-    worksheet.conditional_format('D2:B9999', {'type':     'cell',
+    worksheet.conditional_format('A2:F9999', {'type':     'cell',
                                             'criteria': '==',
                                             'value':    '"Clicked Link"',
                                             'format':   clicked})
 
-    worksheet.conditional_format('D2:B9999', {'type':     'cell',
+    worksheet.conditional_format('A2:F9999', {'type':     'cell',
                                             'criteria': '==',
                                             'value':    '"Email Opened"',
                                             'format':   opened})
 
-    worksheet.conditional_format('D2:B9999', {'type':     'cell',
+    worksheet.conditional_format('A2:F9999', {'type':     'cell',
                                             'criteria': '==',
-                                            'value':    '"Campaign Created"',
+                                            'value':  '"Campaign Created"',
+
                                             'format':   created})
     writer.save()
     writer.close()
