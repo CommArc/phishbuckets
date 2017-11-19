@@ -479,13 +479,13 @@ def get_results():
     """Open the output files, and write headers to them..."""
 
     f1 = open(mail_out1, 'w')
-    print('"Campaign", "CreatedDate", "CreatedTime", "CompletedDate",',
-            '"CompletedTime", "From", "Subject", "Mail", "First", "Last",',
-            '"Status", "ip", "latitude", longitude"',
+    print('Campaign, CreatedDate, CreatedTime, CompletedDate,',
+            'CompletedTime, From, Subject, Mail, First, Last,',
+            'Status, ip, latitude, longitude',
             file=f1)
 
     f2 = open(mail_out2, 'w')
-    print('"Campaign", "Date", "Time", "Email", "Action", "IP", "User Agent"',
+    print('Campaign, Date, Time, Email, Action, IP, User Agent',
             file=f2)
 
 
@@ -515,22 +515,22 @@ def get_results():
                 if not details == '':
                         details = ast.literal_eval(str(details))
                         datetime = local_time(event["time"])
-                        print('"' + camp["name"] +
-                              '", ' + datetime[0:10] +
+                        print( camp["name"] +
+                              ', ' + datetime[0:10] +
                               ', ' +  datetime[11:16] +
-                              ', "' + event["email"] +
-                              '" , "' + event["message"] +
-                              '" , "' + details["browser"]["address"] +
-                              '", "' +  details["browser"]["user-agent"].replace(',', '.') + '"',
+                              ', ' + event["email"] +
+                              ' , ' + event["message"] +
+                              ' , ' + details["browser"]["address"] +
+                              ', ' +  details["browser"]["user-agent"].replace(',', '.') ,
                         file=f2)
                 else:
                     datetime = local_time(event["time"])
-                    print('"' + camp["name"] +
-                          '", ' + datetime[0:10] +
+                    print( camp["name"] +
+                          ', ' + datetime[0:10] +
                           ', ' + datetime[11:16] +
-                          ', "' + event["email"] +
-                          '", "' + event["message"]+
-                          '", "", "" ',
+                          ', ' + event["email"] +
+                          ', ' + event["message"]+
+                          ', ,  ',
                         file=f2)
 
                 if event["message"] == "Clicked Link":
@@ -559,20 +559,20 @@ def get_results():
                 #      the values.
 
                 
-                print('"' + camp["name"] +
-                      '", ' + local_time(camp["created_date"])[0:10] +
+                print( camp["name"] +
+                      ', ' + local_time(camp["created_date"])[0:10] +
                       ', ' + local_time(camp["created_date"])[11:16] +
                       ', ' + local_time(camp["completed_date"])[0:10] +
                       ', ' +  local_time(camp["completed_date"])[11:16] +
-                      ', "' + camp["smtp"]["from_address"] +
-                      '", "' + camp["template"]["subject"] +
-                      '", "' + result["email"] +
-                      '", "' + result["first_name"] +
-                      '", "' + result["last_name"] +
-                      '", "' + result["status"] +
-                      '", "' + result["ip"] +
-                      '", "' + str(result["latitude"]) +
-                      '", "' + str(result["longitude"]) + '"',
+                      ', ' + camp["smtp"]["from_address"] +
+                      ', ' + camp["template"]["subject"] +
+                      ', ' + result["email"] +
+                      ', ' + result["first_name"] +
+                      ', ' + result["last_name"] +
+                      ', ' + result["status"] +
+                      ', ' + result["ip"] +
+                      ', ' + str(result["latitude"]) +
+                      ', ' + str(result["longitude"]) ,
                       file=f1)
 
                 #   and we keep a tally of the sucessful 'phishes'...
