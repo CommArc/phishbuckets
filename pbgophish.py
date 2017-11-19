@@ -718,14 +718,6 @@ def excelout( csv_file, outdir):
     #   Sort
     # df = df.sort_values(by=['Date', 'Time'])
 
-    #   Strip *all* quotes off data items...
-    df = df.apply(lambda x: x.str.strip('"'))
-    df.columns = df.columns.str.strip('"')
-    df = df.apply(lambda x: x.str.strip('"'))
-    df.columns = df.columns.str.strip('"')
-
-
-
     #   Write to .XLSX
     basename=os.path.basename(csv_file)
     writer = pd.ExcelWriter(outdir + '/' + basename + '.xlsx',
