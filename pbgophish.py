@@ -728,9 +728,9 @@ def excelout( csv_file, outdir):
     worksheet = writer.sheets['Sheet1']
 
     #   Define some formatting
-    clicked = workbook.add_format({'bold': True, 'bg_color': 'red' })
-    opened = workbook.add_format({'bold': True, 'bg_color': 'orange'})
-    created = workbook.add_format({'bold': True, 'bg_color': 'yellow'})
+    clicked = workbook.add_format({'bold': True, 'bg_color': 'orange' })
+    opened = workbook.add_format({'bold': True, 'bg_color': 'yellow'})
+    created = workbook.add_format({'bold': True})
     wide = workbook.add_format({'valign': 'Top', 'text_wrap': True})
     superwide = workbook.add_format({'valign': 'Top', 'text_wrap': True})
     centered = workbook.add_format({'align': 'center'})
@@ -752,20 +752,24 @@ def excelout( csv_file, outdir):
     # worksheet.set_column(8, 8, 80, superwide)  # set column width
 
     # Conditional formatting is nice...
-    worksheet.conditional_format('A2:F9999', {'type':     'cell',
-                                            'criteria': '==',
-                                            'value':    '"Clicked Link"',
+    worksheet.conditional_format('E2:G9999', {'type':     'text',
+                                            'criteria': 'containing',
+                                            'value':    'OS X',
                                             'format':   clicked})
 
-    worksheet.conditional_format('A2:F9999', {'type':     'cell',
-                                            'criteria': '==',
-                                            'value':    '"Email Opened"',
+    worksheet.conditional_format('E2:G9999', {'type':     'text',
+                                            'criteria': 'containing',
+                                            'value':    'Email Opened',
                                             'format':   opened})
 
-    worksheet.conditional_format('A2:F9999', {'type':     'cell',
-                                            'criteria': '==',
-                                            'value':  '"Campaign Created"',
+    worksheet.conditional_format('E2:G9999', {'type':     'text',
+                                            'criteria': 'containing',
+                                            'value':    'Clicked Link',
+                                            'format':   clicked})
 
+    worksheet.conditional_format('E2:G9999', {'type':     'text',
+                                            'criteria': 'containing',
+                                            'value':  'Campaign Created',
                                             'format':   created})
     writer.save()
     writer.close()
