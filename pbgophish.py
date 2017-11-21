@@ -555,8 +555,8 @@ def get_results():
 		#	}
 		#	]
                 #   Note the slicing of the ISO 8601 date/time into two fields
-                #   ...and the use of '+' to get the double quotes snug up to 
-                #      the values.
+                #        and the use of '+'. Also, only quoting the subject line
+                #        because it sometimes has commas in it.
 
                 
                 print( camp["name"] +
@@ -565,7 +565,7 @@ def get_results():
                       ', ' + local_time(camp["completed_date"])[0:10] +
                       ', ' +  local_time(camp["completed_date"])[11:16] +
                       ', ' + camp["smtp"]["from_address"] +
-                      ', ' + camp["template"]["subject"] +
+                      ', ' + '"' + camp["template"]["subject"] + '"' + 
                       ', ' + result["email"] +
                       ', ' + result["first_name"] +
                       ', ' + result["last_name"] +
@@ -583,8 +583,10 @@ def get_results():
     f1.close()
     f2.close()
 
-    # Adding conversion of the full-timeline only to a pretty XLSX file
-    excelout(f2, "/tmp") 
+    #   Convert files from CSV to nice XLSX format
+    excelout_timeline(f2, "/tmp")
+    excelout_summary(f1, "/tmp")
+
 
     if not found:
         sys.exit("[Error] No general campaigns matching: '" +
@@ -657,9 +659,9 @@ def get_results():
         f3.close()
         f4.close()
 
-        # Adding conversion of the full-timeline only to a pretty XLSX file
-        excelout(f3, "/tmp") 
-
+        #   Convert 'spear' result files from CSV to nice XLSX format too...
+        excelout_timeline(f3, "/tmp")
+        excelout_summary(f4, "/tmp")
 
     else:
         # not a fatal problem, so we don't call 'os.exit' for this..
@@ -700,9 +702,92 @@ def get_results():
     return r
 
 
-def excelout( csv_file, outdir):
+
+def excelout_summary( csv_file, outdir):
     """
-    Produce a nicely readable XLS from the CSV
+    Produce a nicely readable XLSX from the CSV of a summary
+
+    """
+    import os
+    import pandas as pd
+    import xlsxwriter
+    csv_file = csv_file.name
+
+    with open(csv_file, 'r') as c:
+        df = pd.read_csv(c, quotechar='"', skipinitialspace=True)
+    #        , header=0, skip_blank_lines=True,
+    #                skipinitialspace=True, encoding='latin-1')
+
+    #   Sort
+    # df = df.sort_values(by=['Date', 'Time'])
+
+    #   Write to .XLSX
+    basename=os.path.basename(csv_file)
+    writer = pd.ExcelWriter(outdir + '/' + basename + '.xlsx',
+                            engine='xlsxwriter')
+
+    df.to_excel(writer, sheet_name='Sheet1', index=False)  # send df to writer
+    workbook  = writer.book
+    worksheet = writer.sheets['Sheet1']
+
+    #   Define some formatting
+    clicked = workbook.add_format({'bold': True, 'bg_color': 'orange' })
+    opened = workbook.add_format({'bold': True, 'bg_color': 'yellow'})
+    created = workbook.add_format({'bold': True})
+    wide = workbook.add_format({'valign': 'Top', 'text_wrap': True})
+    superwide = workbook.add_format({'valign': 'Top', 'text_wrap': True})
+    centered = workbook.add_format({'align': 'center'})
+    title = workbook.add_format({'bold': True, 'color': 'white', 'bg_color': 'gray'})
+    left = workbook.add_format({'align': 'left'})
+
+    #   Set the row height to double the default
+    worksheet.set_default_row(30)
+
+    #   We can then pass these formats as an optional third parameter to the 
+    #   worksheet.write() method, or optional fourth param to set_column:
+    worksheet.set_column(0, 0, 21, centered)
+    worksheet.set_column(1, 1, 13, centered)
+    worksheet.set_column(2, 2, 11, centered)
+    worksheet.set_column(3, 3, 18, centered )
+    worksheet.set_column(4, 4, 14, centered)
+    worksheet.set_column(5, 5, 24, wide)
+    worksheet.set_column(6, 6, 40, wide)
+    worksheet.set_column(7, 7, 30, left)
+    worksheet.set_column(8, 8, 12, left)
+    worksheet.set_column(9, 9, 12, left)
+    worksheet.set_column(10, 10, 14, centered)
+    worksheet.set_column(11, 11, 15, centered)
+    worksheet.set_column(12, 12, 12, wide)
+    worksheet.set_column(13, 13, 12, wide)
+    # Conditional formatting is nice...
+    worksheet.conditional_format('E2:G9999', {'type':     'text',
+                                            'criteria': 'containing',
+                                            'value':    'OS X',
+                                            'format':   clicked})
+
+    worksheet.conditional_format('E2:G9999', {'type':     'text',
+                                            'criteria': 'containing',
+                                            'value':    'Email Opened',
+                                            'format':   opened})
+
+    worksheet.conditional_format('E2:G9999', {'type':     'text',
+                                            'criteria': 'containing',
+                                            'value':    'Clicked Link',
+                                            'format':   clicked})
+
+    worksheet.conditional_format('E2:G9999', {'type':     'text',
+                                            'criteria': 'containing',
+                                            'value':  'Campaign Created',
+                                            'format':   created})
+    writer.save()
+    writer.close()
+    return
+
+
+
+def excelout_timeline( csv_file, outdir):
+    """
+    Produce a nicely readable XLSX from the CSV of a timeline
 
     """
     import os
