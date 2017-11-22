@@ -290,9 +290,9 @@ def send_the_report(r, base_group, recips):
     body += "\nRaw technical detail of when emails were sent and clicked are "
     body += "in the attached XLSX files."
     body += "\nNB: The 'User Agent' column will highlight any instance of Apple"
-    body += "      Mac or iPhone - these *may* be 'false positives', so check"
-    body += "      with the users concerned, and if they insist that they did"
-    body += "      not click the link - then exclude them from the tally."
+    body += " Mac or iPhone - these *may* be 'false positives', so check"
+    body += " with the users concerned, and if they insist that they did"
+    body += " not click the link - then exclude them from the tally."
 
     #   Attach the body...
     msg.attach(MIMEText(body, 'plain'))
