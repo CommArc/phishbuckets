@@ -584,8 +584,9 @@ def get_results():
     f2.close()
 
     #   Convert files from CSV to nice XLSX format
-    excelout_timeline(f2, "/tmp")
-    excelout_summary(f1, "/tmp")
+    outdir = "/tmp"
+    excelout_timeline(f2, outdir)
+    excelout_summary(f1, outdir)
 
 
     if not found:
@@ -700,6 +701,14 @@ def get_results():
         sp_phish_score += "\t" + str(k) + " - " + str(v) + "\n"
 
     # Return the results in a dict...
+    #
+    # Note that there's some trickiness below to get 
+    # the XLSX versions; the orginal looked like:
+    # 
+    #    "f1": mail_out1,
+    #    "f2": mail_out2,
+    #    "f3": mail_out3,
+    #    "f4": mail_out4
     r = {
         "num_of_staff": num_of_targets, "num_who_clicked": num_who_clicked,
         "those_who_clicked": those_who_clicked, "phish_score": phish_score,
@@ -708,7 +717,10 @@ def get_results():
         "sp_num_who_clicked": sp_num_who_clicked,
         "sp_those_who_clicked": sp_those_who_clicked,
         "sp_phish_score": sp_phish_score,
-        "f1": mail_out1, "f2": mail_out2, "f3": mail_out3, "f4": mail_out4
+        "f1": outdir + '/' + os.path.basename(mail_out1) + '.xlsx',
+        "f2": outdir + '/' + os.path.basename(mail_out2) + '.xlsx',
+        "f3": outdir + '/' + os.path.basename(mail_out3) + '.xlsx',
+        "f4": outdir + '/' + os.path.basename(mail_out4) + '.xlsx',
     }
 
     return r
