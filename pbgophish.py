@@ -481,7 +481,7 @@ def get_results():
     f1 = open(mail_out1, 'w')
     print('Campaign, CreatedDate, CreatedTime, CompletedDate,',
             'CompletedTime, From, Subject, Mail, First, Last,',
-            'Status, ip, latitude, longitude',
+            'Status, IP, Latitude, Longitude',
             file=f1)
 
     f2 = open(mail_out2, 'w')
@@ -620,10 +620,15 @@ def get_results():
                 if not sp_found:
                     f3 = open(mail_out3, 'w')
                     f4 = open(mail_out4, 'w')
-                    print("Campaign, Created_date, Created_time, Completed_date",
-                          "Completed_time, From, Mail, Subject, First, Last",
-                          "Status", file=f3)  # header line for f3
-                    print("Campaign, Date, Time, Email, Action", file=f4)
+
+                    print('Campaign, CreatedDate, CreatedTime, CompletedDate,',
+                       'CompletedTime, From, Subject, Mail, First, Last,',
+                       'Status, IP, Latitude, Longitude',
+                       file=f3)
+
+                    print("Campaign, Date, Time, Email, Action", 
+                          file=f4)
+
                     sp_found = True
 
                 for event in camp["timeline"]:
@@ -639,20 +644,27 @@ def get_results():
 
                 for result in camp["results"]:
                     # Note the slicing of the ISO 8601 date/time into two fields
-                    print(camp["name"],
-                          ", ", local_time(camp["created_date"])[0:10],
-                          ", ", local_time(camp["created_date"])[11:16],
-                          ", ", local_time(camp["completed_date"])[0:10],
-                          ", ", local_time(camp["completed_date"])[11:16],
-                          ", ", camp["smtp"]["from_address"],
-                          ", ", camp["template"]["subject"],
-                          ", ", result["email"],
-                          ", ", result["first_name"],
-                          ", ", result["last_name"],
-                          ", ", result["status"], file=f3)
-                    # and we keep a tally of the sucessful 'phishes'...
-                    if result["status"] == "Success":
+
+                    print( camp["name"] +
+                      ', ' + local_time(camp["created_date"])[0:10] +
+                      ', ' + local_time(camp["created_date"])[11:16] +
+                      ', ' + local_time(camp["completed_date"])[0:10] +
+                      ', ' +  local_time(camp["completed_date"])[11:16] +
+                      ', ' + camp["smtp"]["from_address"] +
+                      ', ' + '"' + camp["template"]["subject"] + '"' + 
+                      ', ' + result["email"] +
+                      ', ' + result["first_name"] +
+                      ', ' + result["last_name"] +
+                      ', ' + result["status"] +
+                      ', ' + result["ip"] +
+                      ', ' + str(result["latitude"]) +
+                      ', ' + str(result["longitude"]) ,
+                      file=f3)
+
+                    #   and we keep a tally of the sucessful 'phishes'...
+                    if result["status"] == "Clicked Link":
                         sp_phishes_clicked[camp["template"]["subject"]] += 1
+
                 sp_camp_list.append(camp)
 
     if sp_found:
@@ -660,8 +672,8 @@ def get_results():
         f4.close()
 
         #   Convert 'spear' result files from CSV to nice XLSX format too...
-        excelout_timeline(f3, "/tmp")
-        excelout_summary(f4, "/tmp")
+        excelout_timeline(f4, "/tmp")
+        excelout_summary(f3, "/tmp")
 
     else:
         # not a fatal problem, so we don't call 'os.exit' for this..
@@ -745,10 +757,10 @@ def excelout_summary( csv_file, outdir):
 
     #   We can then pass these formats as an optional third parameter to the 
     #   worksheet.write() method, or optional fourth param to set_column:
-    worksheet.set_column(0, 0, 21, centered)
+    worksheet.set_column(0, 0, 24, centered)
     worksheet.set_column(1, 1, 13, centered)
     worksheet.set_column(2, 2, 11, centered)
-    worksheet.set_column(3, 3, 18, centered )
+    worksheet.set_column(3, 3, 30, centered )
     worksheet.set_column(4, 4, 14, centered)
     worksheet.set_column(5, 5, 24, wide)
     worksheet.set_column(6, 6, 40, wide)
@@ -760,22 +772,22 @@ def excelout_summary( csv_file, outdir):
     worksheet.set_column(12, 12, 12, wide)
     worksheet.set_column(13, 13, 12, wide)
     # Conditional formatting is nice...
-    worksheet.conditional_format('E2:G9999', {'type':     'text',
+    worksheet.conditional_format('K1:K9999', {'type':     'text',
                                             'criteria': 'containing',
                                             'value':    'OS X',
                                             'format':   clicked})
 
-    worksheet.conditional_format('E2:G9999', {'type':     'text',
+    worksheet.conditional_format('K1:K9999', {'type':     'text',
                                             'criteria': 'containing',
                                             'value':    'Email Opened',
                                             'format':   opened})
 
-    worksheet.conditional_format('E2:G9999', {'type':     'text',
+    worksheet.conditional_format('K1:K9999', {'type':     'text',
                                             'criteria': 'containing',
                                             'value':    'Clicked Link',
                                             'format':   clicked})
 
-    worksheet.conditional_format('E2:G9999', {'type':     'text',
+    worksheet.conditional_format('K2:K9999', {'type':     'text',
                                             'criteria': 'containing',
                                             'value':  'Campaign Created',
                                             'format':   created})
