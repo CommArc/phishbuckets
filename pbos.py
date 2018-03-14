@@ -299,13 +299,13 @@ def send_the_report(r, base_group, recips):
 
     #   The first file...
     try:
-        filename = mail_out1  # "/tmp/ACME..." will become "tmpACME..."
+        filename = mail_out1
         attachment = open(mail_out1, "rb")
         part = MIMEBase('application', 'octet-stream')
         part.set_payload(attachment.read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
-                        "attachment; filename= %s" % filename)
+                        "attachment; filename= %s" % os.path.basename(filename))
         msg.attach(part)
     except FileNotFoundError:
         print("file is missing")
@@ -318,7 +318,7 @@ def send_the_report(r, base_group, recips):
         part.set_payload(attachment.read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
-                        "attachment; filename= %s" % filename)
+                        "attachment; filename= %s" % os.path.basename(filename))
         msg.attach(part)
     except FileNotFoundError:
         print("file is missing")
@@ -331,7 +331,7 @@ def send_the_report(r, base_group, recips):
         part.set_payload(attachment.read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
-                        "attachment; filename= %s" % filename)
+                        "attachment; filename= %s" % os.path.basename(filename))
         msg.attach(part)
     except FileNotFoundError:
         print("file is missing")
@@ -344,7 +344,7 @@ def send_the_report(r, base_group, recips):
         part.set_payload(attachment.read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
-                        "attachment; filename= %s" % filename)
+                        "attachment; filename= %s" % os.path.basename(filename))
         msg.attach(part)
     except FileNotFoundError:
         print("file is missing")
