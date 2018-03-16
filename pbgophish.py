@@ -558,7 +558,6 @@ def get_results():
                 #        and the use of '+'. Also, only quoting the subject line
                 #        because it sometimes has commas in it.
 
-                
                 print( camp["name"] +
                       ', ' + local_time(camp["created_date"])[0:10] +
                       ', ' + local_time(camp["created_date"])[11:16] +
@@ -652,7 +651,7 @@ def get_results():
                       ', ' + local_time(camp["completed_date"])[0:10] +
                       ', ' +  local_time(camp["completed_date"])[11:16] +
                       ', ' + camp["smtp"]["from_address"] +
-                      ', ' + '"' + camp["template"]["subject"] + '"' + 
+                      ', ' + '"' + camp["template"]["subject"] + '"' +
                       ', ' + result["email"] +
                       ', ' + result["first_name"] +
                       ', ' + result["last_name"] +
@@ -684,7 +683,7 @@ def get_results():
 
 
 
-    # Part III - now total everthing up...
+    # Part III - now total everything up...
 
     #   Using 'set' removes duplicates
     those_who_clicked = set(each_click)
@@ -701,14 +700,6 @@ def get_results():
         sp_phish_score += "\t" + str(k) + " - " + str(v) + "\n"
 
     # Return the results in a dict...
-    #
-    # Note that there's some trickiness below to get 
-    # the XLSX versions; the orginal looked like:
-    # 
-    #    "f1": mail_out1,
-    #    "f2": mail_out2,
-    #    "f3": mail_out3,
-    #    "f4": mail_out4
     r = {
         "num_of_staff": num_of_targets, "num_who_clicked": num_who_clicked,
         "those_who_clicked": those_who_clicked, "phish_score": phish_score,
@@ -850,13 +841,13 @@ def excelout_timeline( csv_file, outdir):
 
     #   We can then pass these formats as an optional third parameter to the 
     #   worksheet.write() method, or optional fourth param to set_column:
-    worksheet.set_column(0, 0, 32, centered) 
-    worksheet.set_column(1, 1, 16, centered) 
-    worksheet.set_column(2, 2, 8, centered) 
-    worksheet.set_column(3, 3, 48, centered ) 
-    worksheet.set_column(4, 4, 20, centered)  
-    worksheet.set_column(5, 5, 20, wide)  
-    worksheet.set_column(6, 6, 60, wide)  
+    worksheet.set_column(0, 0, 32, centered)
+    worksheet.set_column(1, 1, 16, centered)
+    worksheet.set_column(2, 2, 8, centered)
+    worksheet.set_column(3, 3, 48, centered )
+    worksheet.set_column(4, 4, 20, centered)
+    worksheet.set_column(5, 5, 20, wide)
+    worksheet.set_column(6, 6, 60, wide)
     # worksheet.set_column(7, 7, 80, superwide)  # set column width
     # worksheet.set_column(8, 8, 80, superwide)  # set column width
 
