@@ -296,6 +296,9 @@ def send_the_report(r, base_group, recips):
 
     #   Attach the body...
     msg.attach(MIMEText(body, 'plain'))
+    
+    #DEBUG: and print it to screen...
+    print(body)
 
     #   The first file...
     try:

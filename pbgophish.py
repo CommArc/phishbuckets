@@ -425,6 +425,74 @@ def local_time(ISO_datestring):
     ISO_date = dateutil.parser.parse(ISO_datestring)
     return str(ISO_date.astimezone(to_zone))
 
+
+def write_results_csv(camp, phishes_clicked, filename, camp_list):
+    with open(filename, 'w') as filehandle:
+        print("DEBUG: Just opened ", filename)
+        print('Campaign, CreatedDate, CreatedTime, CompletedDate,',
+                'CompletedTime, From, Subject, Mail, First, Last,',
+                'Status, IP, Latitude, Longitude',
+                file=filehandle)
+
+        for result in camp["results"]:
+            print( camp["name"] +
+                 ', ' + local_time(camp["created_date"])[0:10] +
+                 ', ' + local_time(camp["created_date"])[11:16] +
+                 ', ' + local_time(camp["completed_date"])[0:10] + 
+                 ', ' +  local_time(camp["completed_date"])[11:16] +
+                 ', ' + camp["smtp"]["from_address"] +
+                 ', ' + '"' + camp["template"]["subject"] + '"' + 
+                 ', ' + result["email"] +
+                 ', ' + result["first_name"] +
+                 ', ' + result["last_name"] +
+                 ', ' + result["status"] +
+                 ', ' + result["ip"] +
+                 ', ' + str(result["latitude"]) +
+                 ', ' + str(result["longitude"]) ,
+                 file=filehandle)
+
+            #   and we keep a tally of the sucessful 'phishes'...
+            if result["status"] == "Clicked Link":
+                phishes_clicked[camp["template"]["subject"]] += 1
+                camp_list.append(camp)
+    filehandle.close()
+
+
+def write_timeline_csv(camp, each_click, filename):
+    import ast
+    with open(filename, 'w') as filehandle:
+        print("DEBUG: Just opened ", filename)
+        print('Campaign, Date, Time, Email, Action, IP, User Agent',
+                file=filehandle)
+
+        for event in camp["timeline"]:
+            details = event["details"]
+            if not details == '':
+                details = ast.literal_eval(str(details))
+                datetime = local_time(event["time"])
+                print( camp["name"] +
+                    ', ' + datetime[0:10] +
+                    ', ' +  datetime[11:16] +
+                    ', ' + event["email"] + 
+                    ' , ' + event["message"] +
+                    ' , ' + details["browser"]["address"] +
+                    ', ' +  details["browser"]["user-agent"].replace(',', '.') ,
+                    file=filehandle)
+            else:
+                datetime = local_time(event["time"])
+                print( camp["name"] +
+                    ', ' + datetime[0:10] +
+                    ', ' + datetime[11:16] +
+                    ', ' + event["email"] +
+                    ', ' + event["message"]+
+                    ', ,  ',
+                    file=filehandle)
+
+            if event["message"] == "Clicked Link":
+                each_click.append(event["email"])
+    filehandle.close()
+
+
 def get_results():
     """Find matching campaigns, and produce two report files."""
 
@@ -435,7 +503,7 @@ def get_results():
     import sys
     import ast      # abstract syntact trees
     from collections import defaultdict
-    
+
     from datetime import datetime
     from dateutil import tz
     import dateutil.parser
@@ -449,14 +517,14 @@ def get_results():
     #   Variables with 'sp_' are related to the spear-phishes,
     #   while the others are for the general AUTO- campaigns...
     camp_list = []
-    sp_camp_list = []
-    each_click = []
-    sp_each_click = []
-    sp_num_of_staff = 0
+    each_click = []    # list of those_who_clicked
+    phishes_clicked = defaultdict(int)    # phish subjects clicked
     found = False
-    phishes_clicked = defaultdict(int)
-    sp_phishes_clicked = defaultdict(int)
-    sp_targets = []  # those who were sent a spear-phish
+    sp_num_of_staff = 0
+    sp_camp_list = []
+    sp_targets = []    # those sent a spear-phish
+    sp_each_click = [] # list of those_who_clicked (spears)
+    sp_phishes_clicked = defaultdict(int) # phish subjects clicked (spears)
 
     td = tempfile.gettempdir()
     mail_out1 = os.path.join(td, target_group + '-results-summary.csv')
@@ -464,9 +532,10 @@ def get_results():
     mail_out3 = os.path.join(td, target_group + '-spear-results-summary.csv')
     mail_out4 = os.path.join(td, target_group + '-spear-full-timeline.csv')
 
-    # PART 0
-    #
-    """Get the total number of staff (targets) in the base group"""
+    # -- Main base group --
+
+    #   ...first getting the total number of staff (targets) in the base group
+
     full_url = URL + "/api/groups"
     resp = requests.get(full_url, params=GOPHISH_KEY)
     groups = resp.json()
@@ -475,128 +544,31 @@ def get_results():
             found = True
             num_of_targets = len(group["targets"])
 
-    # PART I
-    """Open the output files, and write headers to them..."""
-
-    f1 = open(mail_out1, 'w')
-    print('Campaign, CreatedDate, CreatedTime, CompletedDate,',
-            'CompletedTime, From, Subject, Mail, First, Last,',
-            'Status, IP, Latitude, Longitude',
-            file=f1)
-
-    f2 = open(mail_out2, 'w')
-    print('Campaign, Date, Time, Email, Action, IP, User Agent',
-            file=f2)
-
+    #   ...then pulling the "results" and full "timeline"
 
     for camp in campaigns:
         if "AUTO-" + target_group in camp["name"]:
             print("[OK] Processing ", camp["name"])
-            for event in camp["timeline"]:
-                #
-                #  'events' are structured like this: 
-                #
-                #   "time": atimedate, 
-                #   "message": "Clicked", 
-                #   "email"; "abc@exaple.com",
-                #   "details: {
-                #       "payload": {
-                #           "rid": ["afe4343..5sff"],
-                #       "browser": {
-                #               "address": "202.202.202.222",
-                #               "user-agent": "Mozilla ....Mac OS X...Safari/602.3.12"
-                #
-                # ...but note that "details" can be a blank string...
-                #
-                #   timedate from the API is in UTC, which we'll convert
-                #   to our local zone...
-
-                details = event["details"]
-                if not details == '':
-                        details = ast.literal_eval(str(details))
-                        datetime = local_time(event["time"])
-                        print( camp["name"] +
-                              ', ' + datetime[0:10] +
-                              ', ' +  datetime[11:16] +
-                              ', ' + event["email"] +
-                              ' , ' + event["message"] +
-                              ' , ' + details["browser"]["address"] +
-                              ', ' +  details["browser"]["user-agent"].replace(',', '.') ,
-                        file=f2)
-                else:
-                    datetime = local_time(event["time"])
-                    print( camp["name"] +
-                          ', ' + datetime[0:10] +
-                          ', ' + datetime[11:16] +
-                          ', ' + event["email"] +
-                          ', ' + event["message"]+
-                          ', ,  ',
-                        file=f2)
-
-                if event["message"] == "Clicked Link":
-                    # TODO Check for "Mac OS X" in UserAgent, and exclude them, 
-                    #   because of web link preview feature of Apple:Mail...
-                    each_click.append(event["email"])
 
             for result in camp["results"]:
-		# 
-		# format of the results...
-		#	"results": [ 
-		#	{
-		#	"id": "4408fd5bc60901c35e7352f0205282d26b27a9fc80bdd6ee4db4a6f87c1954bb",
-		#	"email": "bjenius@morningcatch.ph",
-		#	"first_name": "Boyd",
-		#	"last_name": "Jenius",
-		#	"position": "",
-		#	"status": "Success",
-		#	"ip": "x.x.x.x",
-		#	"latitude": 0,
-		#	"longitude": 0
-		#	}
-		#	]
-                #   Note the slicing of the ISO 8601 date/time into two fields
-                #        and the use of '+'. Also, only quoting the subject line
-                #        because it sometimes has commas in it.
+                write_results_csv(camp, phishes_clicked, mail_out1, camp_list)
 
-                print( camp["name"] +
-                      ', ' + local_time(camp["created_date"])[0:10] +
-                      ', ' + local_time(camp["created_date"])[11:16] +
-                      ', ' + local_time(camp["completed_date"])[0:10] +
-                      ', ' +  local_time(camp["completed_date"])[11:16] +
-                      ', ' + camp["smtp"]["from_address"] +
-                      ', ' + '"' + camp["template"]["subject"] + '"' + 
-                      ', ' + result["email"] +
-                      ', ' + result["first_name"] +
-                      ', ' + result["last_name"] +
-                      ', ' + result["status"] +
-                      ', ' + result["ip"] +
-                      ', ' + str(result["latitude"]) +
-                      ', ' + str(result["longitude"]) ,
-                      file=f1)
+            for event in camp["timeline"]:
+                write_timeline_csv(camp, each_click, mail_out2)
 
-                #   and we keep a tally of the sucessful 'phishes'...
-                if result["status"] == "Clicked Link":
-                    phishes_clicked[camp["template"]["subject"]] += 1
-                camp_list.append(camp)
-
-    f1.close()
-    f2.close()
-
-    #   Convert files from CSV to nice XLSX format
+    #   ...and finally converting to XLSX format
     outdir = "/tmp"
-    excelout_timeline(f2, outdir)
-    excelout_summary(f1, outdir)
+    excelout_summary(mail_out1, outdir)
+    excelout_timeline(mail_out2, outdir)
 
 
     if not found:
         sys.exit("[Error] No general campaigns matching: '" +
                  target_group + "' were found.\n")
 
-    # Part II
-    #
-    """ Now we go looking for all the spear-phishing data"""
+    # -- Now the "spears" --
 
-    #   First, the full details of all who will have been sent 'spears'...
+    #   ...first, the full details of all sent 'spears'...
     full_url = URL + "/api/groups"
     resp = requests.get(full_url, params=GOPHISH_KEY)
     groups = resp.json()
@@ -609,78 +581,32 @@ def get_results():
         if not sp_found:
             break  # because we've found all that matter
 
-            #   ...and then the results
-    # noinspection PyAssignmentToLoopOrWithParameter
+    #   ...then pulling the "results" and full "timeline"
 
     for num in range(10):
         for camp in campaigns:
             if target_group + '-spear-' + str(num) in camp["name"]:
                 print("[OK] Processing ", camp["name"])
                 sp_num_of_staff += 1  # cos only one user per spear campaign
-                if not sp_found:
-                    f3 = open(mail_out3, 'w')
-                    f4 = open(mail_out4, 'w')
-
-                    print('Campaign, CreatedDate, CreatedTime, CompletedDate,',
-                       'CompletedTime, From, Subject, Mail, First, Last,',
-                       'Status, IP, Latitude, Longitude',
-                       file=f3)
-
-                    print("Campaign, Date, Time, Email, Action", 
-                          file=f4)
-
-                    sp_found = True
-
-                for event in camp["timeline"]:
-                    # Note the slicing of the ISO 8601 date/time into two fields
-                    print(camp["name"], ", ", event["time"][0:10], ", ",
-                          event["time"][11:16], ", ", event["email"], ", ",
-                          event["message"], file=f4)
-
-                    #   grab all email addresses seen, many will be dups
-                    # sp_targets_seen.append(event["email"])
-                    if event["message"] == "Clicked Link":
-                        sp_each_click.append(event["email"])
+                sp_camp_list.append(camp)
 
                 for result in camp["results"]:
-                    # Note the slicing of the ISO 8601 date/time into two fields
-
-                    print( camp["name"] +
-                      ', ' + local_time(camp["created_date"])[0:10] +
-                      ', ' + local_time(camp["created_date"])[11:16] +
-                      ', ' + local_time(camp["completed_date"])[0:10] +
-                      ', ' +  local_time(camp["completed_date"])[11:16] +
-                      ', ' + camp["smtp"]["from_address"] +
-                      ', ' + '"' + camp["template"]["subject"] + '"' +
-                      ', ' + result["email"] +
-                      ', ' + result["first_name"] +
-                      ', ' + result["last_name"] +
-                      ', ' + result["status"] +
-                      ', ' + result["ip"] +
-                      ', ' + str(result["latitude"]) +
-                      ', ' + str(result["longitude"]) ,
-                      file=f3)
-
+                    write_results_csv(camp, phishes_clicked, mail_out3, camp_list)
                     #   and we keep a tally of the sucessful 'phishes'...
                     if result["status"] == "Clicked Link":
                         sp_phishes_clicked[camp["template"]["subject"]] += 1
 
-                sp_camp_list.append(camp)
+                for event in camp["timeline"]:
+                    write_timeline_csv(camp, each_click, mail_out4)
 
-    if sp_found:
-        f3.close()
-        f4.close()
+        #   ...and finally converting to XLSX format
+        outdir = "/tmp"
+        excelout_summary(mail_out3, outdir)
+        excelout_timeline(mail_out4, outdir)
 
-        #   Convert 'spear' result files from CSV to nice XLSX format too...
-        excelout_timeline(f4, "/tmp")
-        excelout_summary(f3, "/tmp")
-
-    else:
-        # not a fatal problem, so we don't call 'os.exit' for this..
-        print("[Error]: No spear-phishing campaigns matching: '" +
-              target_group + "' were found.\n")
-
-
+    if not found:
+        sys.exit("[Error] No spear campaigns for: '" +
+            target_group + "' were found.\n")
 
 
     # Part III - now total everything up...
@@ -726,7 +652,7 @@ def excelout_summary( csv_file, outdir):
     import os
     import pandas as pd
     import xlsxwriter
-    csv_file = csv_file.name
+    # csv_file = csv_file.name
 
     with open(csv_file, 'r') as c:
         df = pd.read_csv(c, quotechar='"', skipinitialspace=True)
@@ -808,8 +734,9 @@ def excelout_timeline( csv_file, outdir):
     import os
     import pandas as pd
     import xlsxwriter
-    csv_file = csv_file.name
 
+    # csv_file = csv_file.name
+    print(csv_file, type(csv_file))
     with open(csv_file, 'r') as c:
         df = pd.read_csv(c, quotechar="'", skipinitialspace=True)
     #        , header=0, skip_blank_lines=True,
