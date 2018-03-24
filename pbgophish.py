@@ -409,9 +409,6 @@ def get_mailshot_data(spear_name):
     exit_msg = "[Error]: Could not find group " + spear_name
     sys.exit(exit_msg)
 
-    # noinspection PyShadowingNames
-
-
 
 def local_time(ISO_datestring):
     """Converts ISO datastring to local date string"""
@@ -427,7 +424,13 @@ def local_time(ISO_datestring):
 
 
 def write_results_csv(camp, phishes_clicked, filename, camp_list):
-    with open(filename, 'w') as filehandle:
+    import os
+    if os.path.exists(filename):
+        mode = 'a' # append if already exists
+    else:
+        mode = 'w' # make a new file if not 
+
+    with open(filename, mode) as filehandle:
         print("DEBUG: Just opened ", filename)
         print('Campaign, CreatedDate, CreatedTime, CompletedDate,',
                 'CompletedTime, From, Subject, Mail, First, Last,',
@@ -455,12 +458,18 @@ def write_results_csv(camp, phishes_clicked, filename, camp_list):
             if result["status"] == "Clicked Link":
                 phishes_clicked[camp["template"]["subject"]] += 1
                 camp_list.append(camp)
-    filehandle.close()
 
 
 def write_timeline_csv(camp, each_click, filename):
     import ast
-    with open(filename, 'w') as filehandle:
+    import os
+
+    if os.path.exists(filename):
+        mode = 'a' # append if already exists
+    else:
+        mode = 'w' # make a new file if not 
+
+    with open(filename, mode) as filehandle:
         print("DEBUG: Just opened ", filename)
         print('Campaign, Date, Time, Email, Action, IP, User Agent',
                 file=filehandle)
@@ -490,7 +499,6 @@ def write_timeline_csv(camp, each_click, filename):
 
             if event["message"] == "Clicked Link":
                 each_click.append(event["email"])
-    filehandle.close()
 
 
 def get_results():
