@@ -9,19 +9,22 @@ def get_mailshot_time(msset):
     Twenty times to do a mailshot 'campaign', and which groups get them...
 
     TODO:
-      - consider moving config to YAML (easier to read/write, allows comments)
+      -  moving config to YAML (easier to read/write, allows comments) - DONE
+      -  if no YAML, autoconvert the existing JSON
 
     """
 
     import json
+    import yaml
     import sys
     from pbsettings import config_dir
+    # full_path = config_dir + 'mailshot_time.json'
+    full_path = config_dir + 'mailshot_time.yaml'
 
-    full_path = config_dir + 'mailshot_time.json'
 
     try:
         with open(full_path) as data_file:
-            mailshot_times = json.load(data_file)
+            mailshot_times = yaml.load(data_file)
             if msset not in mailshot_times:
                 exit_msg = "[Error] No set: '" + msset + "' found in mailshot_time.json"
                 sys.exit(exit_msg)
@@ -33,11 +36,14 @@ def get_mailshot_time(msset):
         (where day=1 is the starting date of the campaign, and
         typically we don't send anything over the weekend)
 
+        Note that this is in YAML, so  we can manually add comments, but these
+        won't be read or written by the 'yaml' module
+
         """
         sample_mailshot_times = {
             "FIRST":
                 [
-                    [1, "5:00", 0],
+                    [1, "9:00", 0],
                     [1, "10:00", 1],
                     [2, "11:59", 2],
                     [2, "15:00", 3],
@@ -45,7 +51,7 @@ def get_mailshot_time(msset):
                     [3, "16:30", 5],
                     [4, "11:00", 6],
                     [4, "14:00", 7],
-                    [5, "5:00", 8],
+                    [5, "09:00", 8],
                     [5, "10:00", 0],
                     [8, "11:55", 1],
                     [8, "15:00", 2],
@@ -53,7 +59,7 @@ def get_mailshot_time(msset):
                     [9, "16:30", 8],
                     [10, "11:00", 0],
                     [10, "14:00", 9],
-                    [11, "5:00", 7],
+                    [11, "08:30", 7],
                     [11, "10:00", 5],
                     [12, "8:30", 3],
                     [12, "10:30", 0]
@@ -84,16 +90,23 @@ def get_mailshot_time(msset):
         }
 
         with open(full_path, 'w') as outfile:
-            json.dump(sample_mailshot_times, outfile, sort_keys=True,
-                      indent=4, ensure_ascii=False)
+            yaml.dump(sample_mailshot_times, outfile, default_flow_style=False, allow_unicode=True)
+            # json.dump(sample_mailshot_times, outfile, sort_keys=True,
+            #              indent=4, ensure_ascii=False)
 
         # Now open the file we just wrote...
         with open(full_path) as data_file:
-            mailshot_times = json.load(data_file)
+            # mailshot_times = json.load(data_file)
+            mailshot_times = yaml.load(data_file)
+            
+            #DEBUG
+            #
+            print(mailshot_times)
+
             if msset not in mailshot_times:
                 exit_msg = "[Error] No set: '" + msset + "' found in mailshot_time.json"
                 sys.exit(exit_msg)
-
+            
     return mailshot_times[msset]
 
 
@@ -111,16 +124,17 @@ def get_phishes(phset):
 
     """
     import json
+    import yaml
     import sys
     from pbsettings import config_dir
 
-    full_path = config_dir + 'phishes.json'
+    full_path = config_dir + 'phishes.yaml'
 
     try:
-        with open(config_dir + 'phishes.json') as data_file:
-            phishes = json.load(data_file)
+        with open(config_dir + 'phishes.yaml') as data_file:
+            phishes = yaml.load(data_file)
             if phset not in phishes:
-                exit_msg = "[Error] No set: '" + phset + "' found in phishes.json"
+                exit_msg = "[Error] No set: '" + phset + "' found in phishes.yaml"
                 sys.exit(exit_msg)
 
     except IOError:
@@ -152,15 +166,15 @@ def get_phishes(phset):
             ]
         }
 
-        with open(config_dir + 'phishes.json', 'w') as outfile:
-            json.dump(sample_phishes, outfile, sort_keys=True, indent=4,
-                      ensure_ascii=False)
+        with open(config_dir + 'phishes.yaml', 'w') as outfile:
+            yaml.dump(sample_phishes, outfile, default_flow_style=False, allow_unicode= True)
 
         # Now open this file we just wrote...
-        with open(config_dir + 'phishes.json') as data_file:
-            phishes = json.load(data_file)
+        with open(config_dir + 'phishes.yaml') as data_file:
+            phishes = yaml.load(data_file)
+            print(phishes)
             if phset not in phishes:
-                exit_msg = "[Error] No set: '" + phset + "' found in phishes.json"
+                exit_msg = "[Error] No set: '" + phset + "' found in phishes.yaml"
                 sys.exit(exit_msg)
 
     return phishes[phset]
