@@ -4,42 +4,46 @@
 
 
 def get_mailshot_time(msset):
-    """Supply the schedule for the mailshot 'campaigns'.
+    """
+    Supply the schedule for the mailshot 'campaigns'.
 
     Twenty times to do a mailshot 'campaign', and which groups get them...
-
-    TODO:
-      -  moving config to YAML (easier to read/write, allows comments) - DONE
-      -  if no YAML, autoconvert the existing JSON
 
     """
 
     import json
     import yaml
     import sys
+    import os
     from pbsettings import config_dir
-    # full_path = config_dir + 'mailshot_time.json'
+    old_json_file = config_dir + 'mailshot_time.json'
     full_path = config_dir + 'mailshot_time.yaml'
 
+    # If the older JSON config exists, but not the YAML version, then 
+    # we auto-convert the JSON to YAML
+    if os.path.isfile(old_json_file) and not os.path.isfile(full_path):
+        convert_json_to_yaml(old_json_file, full_path)
 
     try:
         with open(full_path) as data_file:
             mailshot_times = yaml.load(data_file)
             if msset not in mailshot_times:
-                exit_msg = "[Error] No set: '" + msset + "' found in mailshot_time.json"
+                exit_msg = ("[Error] No set: '" + msset +
+                    "' found in mailshot_time.yaml")
                 sys.exit(exit_msg)
 
     except IOError:
-        print("[OK] No 'mailshot_time' found, so creating a sample: ", full_path)
         """
         Format: day, hour:minute, group - e.g.: 1, "16:00", 9
         (where day=1 is the starting date of the campaign, and
         typically we don't send anything over the weekend)
 
-        Note that this is in YAML, so  we can manually add comments, but these
-        won't be read or written by the 'yaml' module
+        Note that this will be in YAML format on the disk, so  we can manually
+        add comments, but these won't be read or written to the dict
 
         """
+        print("[OK] No 'mailshot_time' found, so creating a sample: ", full_path)
+
         sample_mailshot_times = {
             "FIRST":
                 [
@@ -90,24 +94,35 @@ def get_mailshot_time(msset):
         }
 
         with open(full_path, 'w') as outfile:
-            yaml.dump(sample_mailshot_times, outfile, default_flow_style=False, allow_unicode=True)
-            # json.dump(sample_mailshot_times, outfile, sort_keys=True,
-            #              indent=4, ensure_ascii=False)
+            yaml.dump(sample_mailshot_times, outfile,
+                    default_flow_style=False, allow_unicode=True)
 
         # Now open the file we just wrote...
         with open(full_path) as data_file:
-            # mailshot_times = json.load(data_file)
             mailshot_times = yaml.load(data_file)
-            
-            #DEBUG
-            #
-            print(mailshot_times)
 
             if msset not in mailshot_times:
-                exit_msg = "[Error] No set: '" + msset + "' found in mailshot_time.json"
+                exit_msg = ("[Error] No set: '" + msset +
+                    "' found in mailshot_time.yaml")
                 sys.exit(exit_msg)
-            
+
     return mailshot_times[msset]
+
+
+def convert_json_to_yaml(json_file, yaml_file):
+    """
+    simply read in using JSON; then write out using YAML
+    """
+    import json
+    import yaml
+
+    print('Converting ', json_file, ' to the new YAML format...')
+
+    with open(json_file) as json_file_handle:
+        data = json.load(json_file_handle)
+    with open(yaml_file,'w') as yaml_file_handle:
+        yaml.dump(data, yaml_file_handle, default_flow_style=False,
+                allow_unicode=True)
 
 
 def get_phishes(phset):
