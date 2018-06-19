@@ -40,6 +40,7 @@ def check_group(base_group):
     import sys
 
     full_url = URL + "/api/groups"
+    print("DEBUG: ", full_url)
     resp = requests.get(full_url, params=GOPHISH_KEY)
     groups = resp.json()
     found = False

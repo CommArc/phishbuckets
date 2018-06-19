@@ -141,9 +141,15 @@ def get_phishes(phset):
     import json
     import yaml
     import sys
+    import os
     from pbsettings import config_dir
-
+    old_json_file = config_dir + 'phishes.json'
     full_path = config_dir + 'phishes.yaml'
+
+    # If the older JSON config exists, but not the YAML version, then 
+    # we auto-convert the JSON to YAML
+    if os.path.isfile(old_json_file) and not os.path.isfile(full_path):
+        convert_json_to_yaml(old_json_file, full_path)
 
     try:
         with open(config_dir + 'phishes.yaml') as data_file:
