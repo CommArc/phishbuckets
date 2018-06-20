@@ -2,7 +2,8 @@
 
 _For use with 'gophish' from Jordan Wright_
 
-(Note: This is a work in progress - and 'gophish' itself is only v0.2.0)
+(Note: This is a work in progress - 'gophish' was at only v0.2.0 when this was
+written)
 
 These scripts are based on a series of assumptions which are true for our own
 work. If these don't match the way you do your phishing, then these scripts 
