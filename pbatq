@@ -4,10 +4,11 @@
 pbatq - like  'atq', but more useful for us
 
     e.g.
-
-    4923  Oct 03 10:15 AUTO-ACME-2 'LOL here are some pix'
-    5888  Oct 03 10:15 AUTO-PROUDF-3 "Your recent transactions"
-    4802  Oct 04 05:00 AUTO-PROUDF-0 "Urgent funds transfer!"
+    Job#  Date & time   Target    Phish
+    ------------------------------------------------------------
+    4923  Oct 03 10:15  ACME-0    "LOL here are some pix"
+    5888  Oct 03 10:15  PROUDF-3  "Your recent transactions"
+    4802  Oct 04 05:00  PROUDF-0  "Urgent funds transfer!"
 
     So...
 
@@ -16,25 +17,16 @@ pbatq - like  'atq', but more useful for us
 
 """
 
-#   TODO
-#   - better handling to 'skip', and note, any oddball/broken jobs
-#   - special handling for 'spears' (in the future)
-#   - special handling for the "pbcollectresults" jobs
-#   - cleanup the code
-
 import calendar
 import csv
 import subprocess
 import sys
 
 
-# noinspection PyBroadException
 def main():
     at_tasks = get_at_tasks()
     clean_tasks = []
-    # print("at_tasks: ", at_tasks)
     for idx, task in enumerate(at_tasks):
-        # print("idx: ", idx)
         #   Get and append details
         details = get_details(task[0])
         try:
@@ -67,7 +59,6 @@ def get_at_tasks():
     job_num = 0
     for job in jobslist:
         job_num += 1
-        # print("job_num: ", job_num)
         job_bits = job.split()
         #   Remove the last two fields
         del job_bits[-1]
@@ -77,7 +68,6 @@ def get_at_tasks():
     return at_tasks
 
 
-# noinspection PyBroadException
 def get_details(tasknum):
     """ Get the details for an 'at' task, based on its #."""
 
@@ -87,23 +77,19 @@ def get_details(tasknum):
     read_items = csv.reader(atdet_list, delimiter=' ', quotechar="'",
                             skipinitialspace=True)
     key_items = list(read_items)
-    # noinspection PyBroadException
     try:
-        the_two = [key_items[0][1], key_items[0][2]]
+        the_two = [key_items[0][2], key_items[0][6]]
         return the_two
     except:
         return
 
 
-# noinspection PyPep8Naming,PyPep8Naming
 def calc_timestamp(task):
     """ Make an ISO date-time string to sort by."""
 
     dd = task[3].zfill(2)
-    # noinspection PyPep8Naming
     MMM = task[2]
     tttt = task[4]
-    # noinspection PyPep8Naming
     YYYY = task[5]
     months = {v: k for k, v in enumerate(calendar.month_abbr)}
     mm = str(months[MMM]).zfill(2)
@@ -112,7 +98,6 @@ def calc_timestamp(task):
     return timestamp
 
 
-# noinspection PyBroadException
 def sort_and_print(tasklist):
     """ Sort tasks in chronological order; and print to screen."""
 
@@ -121,15 +106,17 @@ def sort_and_print(tasklist):
     except:
         print("Skipped...")
         return
+    print('Job#  Date & time \t Target   Phish')
+    print('------------------------------------------------')
     for task in tasks:
         try:
             print(
-                task[0], ":",
+                task[0], "",
                 task[3],
-                task[2], " @",
-                task[4][0:5], " ",
-                task[6], " ",
-                task[7]
+                task[2], "",
+                task[4][0:5], "\t",
+                task[7], " ",
+                task[6]
             )
         except:
             print("Skipped: ", task[0])
@@ -138,3 +125,4 @@ def sort_and_print(tasklist):
 
 if __name__ == '__main__':
     sys.exit(main())
+
