@@ -33,7 +33,7 @@ def main():
     # get list of groups from the server
     #
     full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
+    resp = requests.get(full_url, params=GOPHISH_KEY)
     groups = resp.json()
 
     # is the target group among them?
@@ -65,7 +65,7 @@ def main():
     # Campaigns are simpler; delete all with 'target_group' in their name...
     #
     full_url = URL + "/api/campaigns"
-    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
+    resp = requests.get(full_url, params=GOPHISH_KEY)
     campaigns = resp.json()
 
     deleted = 0
