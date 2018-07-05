@@ -11,7 +11,7 @@ def check_for_subgroups(base_group):
     import sys
 
     full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     groups = resp.json()
     targetgroup = []
 
@@ -41,7 +41,10 @@ def check_group(base_group):
 
     full_url = URL + "/api/groups"
     print("DEBUG: ", full_url)
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+
+    #DEBUG - note the 'verify=False' added to hopefully avoid SSL errors
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
+
     groups = resp.json()
     found = False
 
@@ -94,7 +97,7 @@ def delete_group(grp_id, grp_name):
 
     headers = {'content-type': 'application/json'}
     full_url = URL + "/api/groups/" + str(grp_id)
-    resp = requests.delete(full_url, params=GOPHISH_KEY, headers=headers)
+    resp = requests.delete(full_url, params=GOPHISH_KEY, headers=headers, verify=False)
     if resp.status_code == 200:
         print("Deleted group:", grp_name, "(", grp_id, ")")
     else:
@@ -115,7 +118,7 @@ def create_camp(n_data):
 
     headers = {'content-type': 'application/json'}
     full_url = URL + "/api/campaigns/"
-    resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers)
+    resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers, verify=False)
     if resp.status_code == 201:
         print("[OK] Added, and all went fine")
     else:
@@ -132,7 +135,7 @@ def delete_camp(camp_id, name):
 
     headers = {'content-type': 'application/json'}
     full_url = URL + "/api/campaigns/" + str(camp_id)
-    resp = requests.delete(full_url, params=GOPHISH_KEY, headers=headers)
+    resp = requests.delete(full_url, params=GOPHISH_KEY, headers=headers, verify=False)
     if resp.status_code == 200:
         print("Deleted campaign:", name, "(", camp_id, ")")
     else:
@@ -152,7 +155,7 @@ def dump_camp(name):
     import sys
     headers = {'content-type': 'application/json'}
     full_url = URL + "/api/campaigns"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     campaigns = resp.json()
 
     dumped = 0
@@ -177,7 +180,7 @@ def check_templates(phishes):
     import sys
 
     full_url = URL + "/api/templates/"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     templates = resp.json()
 
     for phish in phishes:
@@ -202,7 +205,7 @@ def check_spear_templates(base_group, spears):
     from pbsettings import GOPHISH_KEY, URL
 
     full_url = URL + "/api/templates"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     templates = resp.json()
     sp_name = ""
     for spear in range(spears):
@@ -227,7 +230,7 @@ def get_num_spear_groups(base_group):
     import requests
 
     full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     groups = resp.json()
 
     num_of_spears = 0
@@ -256,7 +259,7 @@ def check_spear_smtp_profiles(base_group, spears):
     import sys
 
     full_url = URL + "/api/smtp"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     profiles = resp.json()
 
     for spear in range(spears):
@@ -281,7 +284,7 @@ def check_smtp_profiles(phishes):
     import sys
     import requests
     full_url = URL + "/api/smtp"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     smtp_profiles = resp.json()
 
     for phish in phishes:
@@ -304,7 +307,7 @@ def check_scare_page(base_group):
     import sys
 
     full_url = URL + "/api/pages"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     pages = resp.json()
     scare_page = "Scare page - " + base_group
 
@@ -335,7 +338,7 @@ def create_sub(grp_name, grp_targets):
     n_data = json.dumps(o_data)
     headers = {'content-type': 'application/json'}
     full_url = URL + "/api/groups/"
-    resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers)
+    resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers, verify=False)
 
     if resp.status_code == 201:
         print("[OK] Successfully added:", grp_name)
@@ -361,7 +364,7 @@ def select_the_group(base_group):
 
     full_url = URL + "/api/groups"
     try:
-        resp = requests.get(full_url, params=GOPHISH_KEY)
+        resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
         if not (resp.status_code == 200):
             print("[Error] The API lookup of groups gave a",
             resp.status_code, "return code")
@@ -400,7 +403,7 @@ def get_mailshot_data(spear_name):
     import requests
 
     full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     groups = resp.json()
     for group in groups:
         if group["name"] == spear_name:
@@ -444,7 +447,7 @@ def get_results():
     target_group = sys.argv[1]
 
     full_url = URL + "/api/campaigns"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     campaigns = resp.json()
 
     #   Variables with 'sp_' are related to the spear-phishes,
@@ -469,7 +472,7 @@ def get_results():
     #
     """Get the total number of staff (targets) in the base group"""
     full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     groups = resp.json()
     for group in groups:
         if group["name"] == target_group:
@@ -600,7 +603,7 @@ def get_results():
 
     #   First, the full details of all who will have been sent 'spears'...
     full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
+    resp = requests.get(full_url, params=GOPHISH_KEY, verify=False)
     groups = resp.json()
     for num in range(10):
         sp_found = False
