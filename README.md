@@ -3,7 +3,7 @@
 _For use with 'gophish' from Jordan Wright_
 
 (Note: This is a work in progress - 'gophish' was at only v0.2.0 when this was
-written)
+initially developed!)
 
 These scripts are based on a series of assumptions which are true for our own
 work. If these don't match the way you do your phishing, then these scripts 
@@ -31,8 +31,8 @@ may not be for you...
 5 - Although the 'gophish' server is doing the bulk of the work, apart from 
     initial loading of the users, setting up of templates etc. there is no 
     need to login to its interface. As 'phishes' are sent out a 'phish master'
-    email address is advised - and some time after the last phish of a schedule,
-    the full results are also emailed to that address.
+    an email address is advised - and some time after the last phish of a 
+    schedule, the full results are also emailed to that address.
     
 6 - A Linux server should be used to run these scripts, because: (a) they 
     rely on the Linux 'at' command, and (b) a laptop or workstation is probably
@@ -44,9 +44,10 @@ may not be for you...
     server that runs both 'gophish' and these scripts, so not everthing may go
     according to plan in other environments. Any problems, raise a bug issue.
 
-At the time this work was begun, 'gophish' had no ability to schedule campaigns.
-Now that it does, it makes sense to transition these scripts to use that feature
-but that will take some extra work...
+About point 6, note that at  the time this work was begun, 'gophish' had no 
+ability to schedule campaigns, so we use the Linux sceduling system. Now that it
+does, it makes sense to transition these scripts to use 'gophish's native
+sceduling feature - but that will take some extra work...
 
 ## Installation
 
