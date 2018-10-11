@@ -438,6 +438,7 @@ def get_results():
     import os
     import sys
     import ast      # abstract syntact trees
+    import re       # regexes
     from collections import defaultdict
     
     from datetime import datetime
@@ -492,9 +493,12 @@ def get_results():
     print('Campaign, Date, Time, Email, Action, IP, User Agent',
             file=f2)
 
+    # define the format of the automated campaigns
+    pattern = re.compile("AUTO-"+ target_group + "-" + "([0-9])")
 
     for camp in campaigns:
-        if "AUTO-" + target_group in camp["name"]:
+        # if "AUTO-" + target_group in camp["name"]:
+        if pattern.match(camp["name"]):
             print("[OK] Processing ", camp["name"])
             for event in camp["timeline"]:
                 #
