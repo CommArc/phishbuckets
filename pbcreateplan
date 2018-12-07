@@ -80,8 +80,14 @@ def create_subgroup_structure(base_group):
 
 def populate_subgroups(base_group_object, sub_group):
     """Split the email addresses from the base group into the ten subgroups."""
+    from random import shuffle
+
     target_user_index = 0
     had_to_loop = False
+
+    # We now shuffle the targets so that staff don't get 
+    # same/similar 'phishes' on successive campaigns
+    shuffle(base_group_object['targets'])
 
     num_of_targets = len(base_group_object["targets"])
 
@@ -129,3 +135,4 @@ def schedule_collect_results(start_date, base_group):
 
 if __name__ == '__main__':
     sys.exit(main())
+
