@@ -261,8 +261,7 @@ def send_the_report(r, base_group, recips):
     body += phish_score
     body += "\n"
 
-'''     # - rem'd out spear phishing section - #
-
+    '''
     body += "Spear phishing: "
     body += "\n\nThese staff were targeted:\n\n"
 
@@ -289,8 +288,7 @@ def send_the_report(r, base_group, recips):
 
     body += "\nThese are the subject lines of the spear items clicked:\n\n"
     body += sp_phish_score
-
-''' # - end of rem'd out section - #
+    '''
 
     body += "\nRaw technical detail of when emails were sent and clicked are "
     body += "in the attached XLSX files."

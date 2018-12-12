@@ -46,10 +46,13 @@ def main():
         body = n_data
         msg.attach(MIMEText(body, 'plain'))
         text = msg.as_string()
-        server = smtplib.SMTP('localhost')  # bit of an assumption here!
-        server.sendmail(fromaddr, recip, text)
-        print("[OK] Monitoring email sent out")
-        server.quit()
+        #
+        #   nope, don't actually send - too 'noisy'
+        #
+        # server = smtplib.SMTP('localhost')  # bit of an assumption here!
+        # server.sendmail(fromaddr, recip, text)
+        # print("[OK] Monitoring email sent out")
+        # server.quit()
     else:
         print("Houston, we have a problem....")
         print("\nText: ")
