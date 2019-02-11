@@ -126,6 +126,23 @@ def create_camp(n_data):
     return resp
 
 
+def sched_camp(n_data):
+    """Schedule a new campaign - for a specific time and date"""
+
+    from pbsettings import GOPHISH_KEY, URL
+    import requests
+    import sys
+
+    headers = {'content-type': 'application/json'}
+    full_url = URL + "/api/campaigns/"
+    resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers)
+    if resp.status_code == 201:
+        print("[OK] Added, and all went fine")
+    else:
+        sys.exit("Bugger! campaign creation failed")
+    return resp
+
+
 def delete_camp(camp_id, name):
     """Delete a campaign, by it's id."""
 
