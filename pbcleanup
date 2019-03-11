@@ -1,20 +1,14 @@
 #!/usr/bin/env python3
 """
-    pbcleanup - Given a base group, it deletes all
+    pbcleanup
+    
+        Given a base group, it deletes all
         the sub-groups, and the campaigns associated.
 
         This is done simply by name matching - so assumes that
         these have been added in a regular way by our scripts.
 
-        But the 'spear' groups like ACME0816-spear-1 have been added
-        manually so are not cleaned up, unless specified (as in
-        'pbcleanup ACME0816-spear' - which will delete all groups and
-        campaigns with that string in their name).
 """
-
-#   TODO
-#   - should not crash if given a bogus base_name
-#
 
 import sys
 import requests
@@ -78,10 +72,8 @@ def main():
     else:
         print("[Error] No campaigns found to delete")
 
-    # We won't try to automate this for now...
-    # 
-    print("\nYou may also need to manually kill any queued tasks with: 'pbkill ",
-          base_group, "'", sep="")  # ------------ end of main() ----------------------------
+
+# ------------ end of main() ----------------------------
 
 if __name__ == '__main__':
     sys.exit(main())

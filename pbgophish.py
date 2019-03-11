@@ -52,7 +52,7 @@ def check_group(base_group):
         if group["name"] == base_group:
             found = True
             base_group_object = group
-            print('[OK] Found base group:  "', base_group, '"', sep='')
+            print('[OK] Found base group:  "', base_group, sep='')
             return base_group_object
 
     if not found:
@@ -122,7 +122,7 @@ def create_camp(n_data):
     if resp.status_code == 201:
         print("[OK] Added, and all went fine")
     else:
-        sys.exit("Bugger! campaign creation failed")
+        sys.exit("Bugger! campaign creation failed, code: " + str(resp.status_code))
     return resp
 
 
@@ -257,7 +257,7 @@ def get_num_spear_groups(base_group):
         for group in groups:
             if group["name"] == sp_name:
                 num_of_spears += 1
-                print('[OK] Found "', sp_name, '"', sep='')
+                print('[OK] Found "', sp_name, sep='')
                 missing = False
                 break
 
@@ -435,7 +435,7 @@ def get_mailshot_data(spear_name):
 
 
 def local_time(ISO_datestring):
-    """Converts ISO datastring to local date string"""
+    """Converts UTC ISO datastring to local date string"""
 
     from datetime import datetime
     from dateutil import tz
@@ -444,7 +444,23 @@ def local_time(ISO_datestring):
     from_zone = tz.gettz('UTC')
     to_zone = tz.gettz('Pacific/Auckland')
     ISO_date = dateutil.parser.parse(ISO_datestring)
-    return str(ISO_date.astimezone(to_zone))
+    nz_date = ISO_date.astimezone(to_zone)
+    nz_date_str = nz_date.isoformat(sep='T')
+    return  nz_date_str
+
+def UTC_time(ISO_datestring):
+    """Converts local ISO datastring to UTC date string"""
+
+    from datetime import datetime
+    from dateutil import tz
+    import dateutil.parser
+
+    from_zone = tz.gettz('Pacific/Auckland')
+    to_zone = tz.gettz('UTC')
+    ISO_date = dateutil.parser.parse(ISO_datestring)
+    UTC_date = ISO_date.astimezone(to_zone)
+    UTC_date_str = UTC_date.isoformat(sep='T')
+    return UTC_date_str
 
 def get_results():
     """Find matching campaigns, and produce two report files."""
@@ -908,4 +924,61 @@ def excelout_timeline( csv_file, outdir):
     writer.save()
     writer.close()
     return
+
+def mailshots(base_group, start_date, phish_set, sched_name):
+    """Schedule the 20 phishing mailshot tasks, but
+        via the 'gophish' API
+    """
+
+    import os
+    import time
+    import datetime
+    import json
+    from pbconfig import get_mailshot_time, get_phishes
+    from pbgophish import create_camp
+
+    mailshot_time = get_mailshot_time(sched_name)
+    phishes = get_phishes(phish_set)
+
+    for shot in range(0, 20):
+        if start_date == 'now':
+            # Send out one per minute, after a one minute delay...
+            delay = shot + 1
+            mailshot_date = datetime.datetime.now()
+            shot_td = mailshot_date + datetime.timedelta(minutes=delay)
+            shot_time = shot_td.strftime('%H') + ":" + shot_td.strftime('%M')
+
+        else:
+            try:
+                mailshot_date = datetime.datetime.strptime(start_date, '%d/%m/%Y')
+                mailshot_date += datetime.timedelta(days=mailshot_time[shot][0] - 1)
+            except ValueError:
+                print("[Error] Date is not in dd/mm/YYYY format")
+            #    
+            shot_time = mailshot_time[shot][1]
+
+        # Now create the campaign via the API, with scheduling controlled by
+        # the 'launch_date" attribute...
+
+        launch_date = shot_time + mailshot_date.strftime('%d/%m/%Y')
+        nz_launch_date = mailshot_date.strftime('%Y-%m-%d') + 'T' + shot_time + ":00+13:00"
+        UTC_launch_date = UTC_time(nz_launch_date)
+
+        o_data = {"name": 'AUTO' + base_group + '-' + str(shot),
+              "template": {"name": phishes[shot % 10][0]},
+              "page": {"name": 'Scare page - ' + base_group},
+              "url": phishes[shot % 10][1],
+              "smtp": {"name": phishes[shot % 10][2]},
+              "launch_date": UTC_launch_date,
+              "send_by_date":"0001-01-01T00:00:00Z",
+              "groups": [{"name": base_group + '-' + str(mailshot_time[shot][2])}]
+              }
+        n_data = json.dumps(o_data)
+
+        #   Now create the new campaign
+        resp = create_camp(n_data)
+        time.sleep(2)
+
+    print("[OK] All mailshot jobs are scheduled")
+
 
