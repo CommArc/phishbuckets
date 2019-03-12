@@ -42,13 +42,11 @@ def main():
         sys.exit(exit_msg)
 
     # ...and delete 'em - 
-    # (but we never zap the manually setup 'spear' groups
     #
     deleted = 0
     for group in groups:
         if (base_group in group["name"]) and \
-                (base_group != group["name"]) and \
-                ("-spear-" not in group["name"]):
+                (base_group != group["name"]):
             delete_group(group["id"], group["name"])
             deleted += 1
     if deleted > 0:

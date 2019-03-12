@@ -329,30 +329,6 @@ def select_the_group(base_group):
         sys.exit("[Error] Target group: '" + base_group + "' not found.\n")
     return
 
-    # noinspection PyShadowingNames
-
-
-def get_mailshot_data(spear_name):
-    """Get string of data (time, date, URL) from 'Position' of first user"""
-
-    from pbsettings import GOPHISH_KEY, URL
-    import sys
-    import requests
-
-    full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
-    groups = resp.json()
-    for group in groups:
-        if group["name"] == spear_name:
-            data = group["targets"][0]["position"]
-            return data
-
-    exit_msg = "[Error]: Could not find group " + spear_name
-    sys.exit(exit_msg)
-
-    # noinspection PyShadowingNames
-
-
 
 def local_time(ISO_datestring):
     """Converts UTC ISO datastring to local date string"""
@@ -556,93 +532,8 @@ def get_results():
 
     # Part II
     #
-    """ Now we go looking for all the spear-phishing data"""
-
-    #   First, the full details of all who will have been sent 'spears'...
-    full_url = URL + "/api/groups"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
-    groups = resp.json()
-    for num in range(10):
-        sp_found = False
-        for group in groups:
-            if (target_group + '-spear-' + str(num)) in group["name"]:
-                sp_targets.append(group["targets"][0])  # should only be one
-                sp_found = True
-        if not sp_found:
-            break  # because we've found all that matter
-
-            #   ...and then the results
-    # noinspection PyAssignmentToLoopOrWithParameter
-
-    for num in range(10):
-        for camp in campaigns:
-            if target_group + '-spear-' + str(num) in camp["name"]:
-                print("[OK] Processing ", camp["name"])
-                sp_num_of_staff += 1  # cos only one user per spear campaign
-                if not sp_found:
-                    f3 = open(mail_out3, 'w')
-                    f4 = open(mail_out4, 'w')
-
-                    print('Campaign, CreatedDate, CreatedTime, CompletedDate,',
-                       'CompletedTime, From, Subject, Mail, First, Last,',
-                       'Status, IP, Latitude, Longitude',
-                       file=f3)
-
-                    print("Campaign, Date, Time, Email, Action", 
-                          file=f4)
-
-                    sp_found = True
-
-                for event in camp["timeline"]:
-                    # Note the slicing of the ISO 8601 date/time into two fields
-                    print(camp["name"], ", ", event["time"][0:10], ", ",
-                          event["time"][11:16], ", ", event["email"], ", ",
-                          event["message"], file=f4)
-
-                    #   grab all email addresses seen, many will be dups
-                    # sp_targets_seen.append(event["email"])
-                    if event["message"] == "Clicked Link":
-                        sp_each_click.append(event["email"])
-
-                for result in camp["results"]:
-                    # Note the slicing of the ISO 8601 date/time into two fields
-
-                    print( camp["name"] +
-                      ', ' + local_time(camp["created_date"])[0:10] +
-                      ', ' + local_time(camp["created_date"])[11:16] +
-                      ', ' + local_time(camp["completed_date"])[0:10] +
-                      ', ' +  local_time(camp["completed_date"])[11:16] +
-                      ', ' + camp["smtp"]["from_address"] +
-                      ', ' + '"' + camp["template"]["subject"] + '"' + 
-                      ', ' + result["email"] +
-                      ', ' + result["first_name"] +
-                      ', ' + result["last_name"] +
-                      ', ' + result["status"] +
-                      ', ' + result["ip"] +
-                      ', ' + str(result["latitude"]) +
-                      ', ' + str(result["longitude"]) ,
-                      file=f3)
-
-                    #   and we keep a tally of the sucessful 'phishes'...
-                    if result["status"] == "Clicked Link":
-                        sp_phishes_clicked[camp["template"]["subject"]] += 1
-
-                sp_camp_list.append(camp)
-
-    if sp_found:
-        f3.close()
-        f4.close()
-
-        #   Convert 'spear' result files from CSV to nice XLSX format too...
-        excelout_timeline(f4, "/tmp")
-        excelout_summary(f3, "/tmp")
-
-    else:
-        # not a fatal problem, so we don't call 'os.exit' for this..
-        print("[Error]: No spear-phishing campaigns matching: '" +
-              target_group + "' were found.\n")
-
-
+    """ We *used* to go looking for all the spear-phishing data"""
+    print("[OK]: We don't use spear-phishing anymore." 
 
 
     # Part III - now total everthing up...
@@ -650,16 +541,11 @@ def get_results():
     #   Using 'set' removes duplicates
     those_who_clicked = set(each_click)
     num_who_clicked = len(those_who_clicked)
-    sp_those_who_clicked = set(sp_each_click)
-    sp_num_who_clicked = len(sp_those_who_clicked)
 
     #   Tally up the scores of which 'phishes' were more successfull...
     phish_score = ""
     for k, v in phishes_clicked.items():
         phish_score += "\t" + str(k) + " - " + str(v) + "\n"
-    sp_phish_score = ""
-    for k, v in sp_phishes_clicked.items():
-        sp_phish_score += "\t" + str(k) + " - " + str(v) + "\n"
 
     # Return the results in a dict...
     #
