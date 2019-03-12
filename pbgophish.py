@@ -533,7 +533,7 @@ def get_results():
     # Part II
     #
     """ We *used* to go looking for all the spear-phishing data"""
-    print("[OK]: We don't use spear-phishing anymore." 
+    print("[OK]: We don't use spear-phishing anymore.") 
 
 
     # Part III - now total everthing up...
