@@ -31,23 +31,17 @@ may not be for you...
 5 - Although the 'gophish' server is doing the bulk of the work, apart from 
     initial loading of the users, setting up of templates etc. there is no 
     need to login to its interface. As 'phishes' are sent out a 'phish master'
-    an email address is advised - and some time after the last phish of a 
-    schedule, the full results are also emailed to that address.
+    an email address is advised.
     
-6 - A Linux server should be used to run these scripts, because: (a) they 
-    rely on the Linux 'at' command, and (b) a laptop or workstation is probably
-    not suitable unless it's "always on" as the 'at' jobs are queued up there.
+6 - A client Linux or Windows machine could be used to run these scripts,
+    because everything is done via the gophish API. 
     
-7 - The 'gophish' server however, could be running on a Windows or OSX machine.
+7 - The 'gophish' server however, could be running on Linux, Windows or OSX.
 
 8 - Despite the above, most development and testing has been done with one Linux
-    server that runs both 'gophish' and these scripts, so not everthing may go
-    according to plan in other environments. Any problems, raise a bug issue.
-
-About point 6, note that at  the time this work was begun, 'gophish' had no 
-ability to schedule campaigns, so we use the Linux sceduling system. Now that it
-does, it makes sense to transition these scripts to use 'gophish's native
-sceduling feature - but that will take some extra work...
+    server that runs both the 'gophish' server and these scripts, so not 
+    everthing may go according to plan in other environments. Any problems, 
+    raise an issue on Github.
 
 ## Installation
 
