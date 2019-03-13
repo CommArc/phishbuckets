@@ -82,7 +82,7 @@ will use
 * Add your server URL, API key and your 'phishmaster' email to the _config_ file
 At this point you should be able to test the system by typing something like:
 
-    pbcreateplan MYGROUP 15/5/2017 first first
+    pbschedule MYGROUP 15/5/2017 first first
 
 The script is pretty good at giving useful feedback on what is wrong.
 
@@ -92,9 +92,4 @@ The key point of the 'phishbuckets' system is to take a large group of users, an
 make 20 campaigns to target them. Once finished it's helpful to be able to clean up
 the gophish "Dashboard" view by deleting all these campaigns - and the ten
 "sub-groups" of users. The script _pbcleanup_ allows this.
-
-## Spear-phishing
-
-The _pbcreate_spear_ script is included; but should probably be avoided as it uses
-a rather hackery approach.
 
