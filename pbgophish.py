@@ -60,32 +60,11 @@ def check_group(base_group):
         sys.exit(exit_msg)
 
 
-def get_at_jobs():
-    """Gets a list of the queued up 'at' jobs, by number."""
-
-    import subprocess
-
-    cmd = "atq | cut -f1 "
-    output = subprocess.check_output(cmd, shell=True)
-    #   Comes back as bytes, hence the decode bit...
-    alljobs = output.decode("utf-8")
-    list_of_at_jobs = alljobs.split("\n")
-    del list_of_at_jobs[-1]
-    return list_of_at_jobs
-
-
 def group_name(job):
     import subprocess
     cmd = 'at -c ' + job + ' | tail -2| head -1| cut -f 2 -d" "'
     base_name = str(subprocess.check_output(cmd, shell=True))
     return base_name
-
-
-def kill_job(job):
-    import subprocess
-    cmd = 'atrm ' + job
-    subprocess.check_output(cmd, shell=True)
-    return
 
 
 def delete_group(grp_id, grp_name):
