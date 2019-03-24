@@ -749,7 +749,7 @@ def mailshots(base_group, start_date, phish_set, sched_name):
         nz_launch_date = mailshot_date.strftime('%Y-%m-%d') + 'T' + shot_time + ":00+13:00"
         UTC_launch_date = UTC_time(nz_launch_date)
 
-        o_data = {"name": 'AUTO' + base_group + '-' + str(shot),
+        o_data = {"name": 'AUTO-' + base_group + '-' + str(shot),
               "template": {"name": phishes[shot % 10][0]},
               "page": {"name": 'Scare page - ' + base_group},
               "url": phishes[shot % 10][1],
