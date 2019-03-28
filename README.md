@@ -2,9 +2,6 @@
 
 _For use with 'gophish' from Jordan Wright_
 
-(Note: This is a work in progress - 'gophish' was at only v0.2.0 when this was
-initially developed!)
-
 These scripts are based on a series of assumptions which are true for our own
 work. If these don't match the way you do your phishing, then these scripts 
 may not be for you...
@@ -30,8 +27,7 @@ may not be for you...
 
 5 - Although the 'gophish' server is doing the bulk of the work, apart from 
     initial loading of the users, setting up of templates etc. there is no 
-    need to login to its interface. As 'phishes' are sent out a 'phish master'
-    an email address is advised.
+    need to login to its interface. 
     
 6 - A client Linux or Windows machine could be used to run these scripts,
     because everything is done via the gophish API. 
