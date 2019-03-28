@@ -82,10 +82,18 @@ At this point you should be able to test the system by typing something like:
 
 The script is pretty good at giving useful feedback on what is wrong.
 
+## Collecting results
+
+At the end of the two week run, email yourself the results, and logs, with:
+
+    pbcollectresults MYGROUP me@example.com
+ 
+
 ## Cleanup
 
-The key point of the 'phishbuckets' system is to take a large group of users, and
-make 20 campaigns to target them. Once finished it's helpful to be able to clean up
-the gophish "Dashboard" view by deleting all these campaigns - and the ten
-"sub-groups" of users. The script _pbcleanup_ allows this.
+Once finished, it's helpful to be able to clean up the gophish "Dashboard" view 
+by deleting all these campaigns - and the ten "sub-groups" of users. Do it like
+this:
+
+    pbcleanup MYGROUP
 
