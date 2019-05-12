@@ -40,9 +40,8 @@ def check_group(base_group):
     import sys
 
     full_url = URL + "/api/groups"
-    print("DEBUG: ", full_url)
+    print("[OK]: Talking to the API at: ", full_url)
 
-    #DEBUG - note the 'verify=False' added to hopefully avoid SSL errors
     resp = requests.get(full_url, params=GOPHISH_KEY)
 
     groups = resp.json()
@@ -401,8 +400,6 @@ def get_results():
                         file=f2)
 
                 if event["message"] == "Clicked Link":
-                    # TODO Check for "Mac OS X" in UserAgent, and exclude them, 
-                    #   because of web link preview feature of Apple:Mail...
                     each_click.append(event["email"])
 
             for result in camp["results"]:
@@ -514,11 +511,6 @@ def excelout_summary( csv_file, outdir):
 
     with open(csv_file, 'r') as c:
         df = pd.read_csv(c, quotechar='"', skipinitialspace=True)
-    #        , header=0, skip_blank_lines=True,
-    #                skipinitialspace=True, encoding='latin-1')
-
-    #   Sort
-    # df = df.sort_values(by=['Date', 'Time'])
 
     #   Write to .XLSX
     basename=os.path.basename(csv_file)
@@ -595,11 +587,6 @@ def excelout_timeline( csv_file, outdir):
 
     with open(csv_file, 'r') as c:
         df = pd.read_csv(c, quotechar="'", skipinitialspace=True)
-    #        , header=0, skip_blank_lines=True,
-    #                skipinitialspace=True, encoding='latin-1')
-
-    #   Sort
-    # df = df.sort_values(by=['Date', 'Time'])
 
     #   Write to .XLSX
     basename=os.path.basename(csv_file)
@@ -631,8 +618,6 @@ def excelout_timeline( csv_file, outdir):
     worksheet.set_column(4, 4, 20, centered)
     worksheet.set_column(5, 5, 20, wide)
     worksheet.set_column(6, 6, 60, wide)
-    # worksheet.set_column(7, 7, 80, superwide)  # set column width
-    # worksheet.set_column(8, 8, 80, superwide)  # set column width
 
     # Conditional formatting is nice...
     worksheet.conditional_format('E2:G9999', {'type':     'text',
@@ -660,8 +645,9 @@ def excelout_timeline( csv_file, outdir):
 
 
 def mailshots(base_group, start_date, phish_set, sched_name):
-    """Schedule the 20 phishing mailshot tasks, but
-        via the 'gophish' API
+    """
+    Schedule the 20 phishing mailshot tasks, via the 'gophish' API
+
     """
 
     import os

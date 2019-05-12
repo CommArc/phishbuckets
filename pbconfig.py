@@ -5,9 +5,8 @@
 
 def get_mailshot_time(msset):
     """
-    Supply the schedule for the mailshot 'campaigns'.
-
-    Twenty times to do a mailshot 'campaign', and which groups get them...
+    Get the schedule for the mailshot 'campaigns', from a config file
+    which defines twenty mailshots and which groups get them and when...
 
     """
 

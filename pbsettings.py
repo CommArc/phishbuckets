@@ -11,7 +11,6 @@ config = configparser.ConfigParser()
 config_dir = os.path.expanduser('~/.phishbuckets/')
 full_path = config_dir + 'config'
 
-# noinspection PyBroadException
 try:
     config.read(full_path)
     key_itself = json.loads(config.get("Global", "GOPHISH_KEY"))
@@ -24,7 +23,6 @@ except:
         "\n"
     )
 
-# noinspection PyBroadException
 try:
     config.read(full_path)
     EMAIL_FROM = json.loads(config.get("Global", "FROM"))
@@ -36,7 +34,6 @@ except:
         "\n"
     )
 
-# noinspection PyBroadException
 try:
     config.read(full_path)
     PHISH_MASTER = json.loads(config.get("Global", "PHISH_MASTER"))
@@ -48,7 +45,6 @@ except:
         "\n"
     )
 
-# noinspection PyBroadException
 try:
     config.read(full_path)
     URL = json.loads(config.get("Global", "GOPHISH_SERVER_URL"))

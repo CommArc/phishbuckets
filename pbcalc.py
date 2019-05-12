@@ -43,41 +43,4 @@ def check_date(start_date):
         return start
 
 
-def split_and_check(mailshot_data):
-    """Split the text, returning them as a list. Fatal exit if any problems"""
 
-    import sys
-    import datetime
-    from urllib.parse import urlparse
-
-    # Check 'mailshotdata', a single string like this:
-    #
-    #    "28/11/2016 16:15 http://dropbox.secserv.kr/0098098.jpg"
-
-    # noinspection PyBroadException
-    try:
-        date = mailshot_data.split()[0]
-        time = mailshot_data.split()[1]
-        ph_url = mailshot_data.split()[2]
-    except:
-        print("[ERROR] 'Position' is blank or misformed")
-        sys.exit()
-    try:
-        datetime.datetime.strptime(time, '%H:%M')
-    except ValueError:
-        print("[ERROR] 'Position' time value not in hh:mm format: ", time)
-        sys.exit()
-    try:
-        datetime.datetime.strptime(date, '%d/%m/%Y')
-    except ValueError:
-        print("[ERROR] 'Position' date not in dd/mm/YYYY format: ", date)
-        sys.exit()
-    urlbits = urlparse(ph_url)
-    if (urlbits.scheme != "") and (urlbits.netloc != ""):
-        pass
-    else:
-        print("[ERROR] 'Position' URL is not valid: ", ph_url)
-        sys.exit()
-
-    print("[OK]   Mailshot data looks fine...")
-    return [date, time, ph_url]

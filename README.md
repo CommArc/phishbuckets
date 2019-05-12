@@ -36,7 +36,7 @@ may not be for you...
 
 8 - Despite the above, most development and testing has been done with one Linux
     server that runs both the 'gophish' server and these scripts, so not 
-    everthing may go according to plan in other environments. Any problems, 
+    everything may go according to plan in other environments. Any problems, 
     raise an issue on Github.
 
 ## Installation
@@ -47,9 +47,9 @@ may not be for you...
 ## Configuration
 
 * The scripts expect configuration files in _~/.phishbuckets_ - as follows:
-*  - _config_ - Main configuration options
-*  - _mailshot_time.json_ - Sets of one of more mailshot times
-*  - _phishes.json_ - Sets of 'phishes', email templates, URLs and senders
+*  - *config* - Main configuration options
+*  - *mailshot_time.yaml* - Sets of one of more mailshot times
+*  - *phishes.yaml* - Sets of 'phishes', email templates, URLs and senders
 
 An example of _config_ is:
 
@@ -63,7 +63,7 @@ An example of _config_ is:
     # ...and who they'll appear to be from:
     FROM="phishserver@phish.example.com"
 
-The format of _phishes.json_ and _mailshot_time.json_ is documented in _pbconfig.py_
+The format of *phishes.yaml* and *mailshot_time.yaml* is documented in *pbconfig.py* 
 with examples.
 
 ## Required setup in 'gophish'
@@ -71,11 +71,11 @@ with examples.
 These automation scripts only make sense if you've already configured gophish
 and can sucessfully "manually" send off campaigns, and collect results. At that
 point:
-* Setup ten email templates, sending smtp profiles and decided upon the URLs you
+* Setup ten email templates, sending smtp profiles and decide upon the URLs you
 will use
-* Document these ten phishes in your _phishes.json_ file
-* Decide on a schedule, and document in _mailshot_time.json_ 
-* Add your server URL, API key and your 'phishmaster' email to the _config_ file
+* Document these ten phishes in your *phishes.json* file
+* Decide on a schedule, and document in *mailshot_time.json* 
+* Add your server URL, API key and your 'phishmaster' email to the *config_ file*
 
 At this point you should be able to test the system by typing something like:
 
@@ -92,9 +92,8 @@ At the end of the two week run, email yourself the results, and logs, with:
 
 ## Cleanup
 
-Once finished, it's helpful to be able to clean up the gophish "Dashboard" view 
-by deleting all these campaigns - and the ten "sub-groups" of users. Do it like
-this:
+Once finished, it's helpful to clean up the by deleting all these campaigns
+and the ten "sub-groups" of users. Do it like this:
 
     pbcleanup MYGROUP
 

@@ -2,8 +2,7 @@
 """
 pbschedule <usergroup> <start-date> <phish_set> <sched_name>
 
-    - replaces 'pbcreateplan', scheduling the mailshots by API, using the
-    'launch_date' attribute - rather than the old 'Linux at job' way.
+    - scheduling the mailshots by API, using the 'launch_date' attribute
 
 """
 
@@ -97,7 +96,6 @@ def populate_subgroups(base_group_object, sub_group):
             if target_user_index > num_of_targets - 1:
                 had_to_loop = True
                 target_user_index = 0
-
 
 
 if __name__ == '__main__':
