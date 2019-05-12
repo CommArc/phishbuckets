@@ -98,23 +98,6 @@ def create_camp(n_data):
     return resp
 
 
-def sched_camp(n_data):
-    """Schedule a new campaign - for a specific time and date"""
-
-    from pbsettings import GOPHISH_KEY, URL
-    import requests
-    import sys
-
-    headers = {'content-type': 'application/json'}
-    full_url = URL + "/api/campaigns/"
-    resp = requests.post(full_url, n_data, params=GOPHISH_KEY, headers=headers)
-    if resp.status_code == 201:
-        print("[OK] Added, and all went fine")
-    else:
-        sys.exit("Bugger! campaign creation failed")
-    return resp
-
-
 def delete_camp(camp_id, name):
     """Delete a campaign, by it's id."""
 
@@ -135,30 +118,6 @@ def delete_camp(camp_id, name):
         print(resp.encoding)
         sys.exit()
     return
-
-def dump_camp(name):
-    """Dump a campaign, by its name."""
-    #TODO fix this up so it does something useful...
-    from pbsettings import GOPHISH_KEY, URL
-    import requests
-    import sys
-    headers = {'content-type': 'application/json'}
-    full_url = URL + "/api/campaigns"
-    resp = requests.get(full_url, params=GOPHISH_KEY)
-    campaigns = resp.json()
-
-    dumped = 0
-    for camp in campaigns:
-        print(type(name), type(camp["name"]))
-        if name == camp["name"]:
-            print(camp["name"], camp["launch_date"])
-            dumped += 1
-    if dumped > 0:
-        print("[OK] Dumped ", dumped, " campaigns")
-    else:
-        print("[Error] No campaigns found to dump")
-    return
-
 
 
 def check_templates(phishes):
@@ -261,8 +220,6 @@ def create_sub(grp_name, grp_targets):
 
     return
 
-    # noinspection PyShadowingNames,PyShadowingNames
-
 
 def select_the_group(base_group):
     """Get the list of groups."""
@@ -316,6 +273,7 @@ def local_time(ISO_datestring):
     nz_date_str = nz_date.isoformat(sep='T')
     return  nz_date_str
 
+
 def UTC_time(ISO_datestring):
     """Converts local ISO datastring to UTC date string"""
 
@@ -330,6 +288,7 @@ def UTC_time(ISO_datestring):
     UTC_date_str = UTC_date.isoformat(sep='T')
     return UTC_date_str
 
+
 def get_results():
     """Find matching campaigns, and produce two report files."""
 
@@ -341,7 +300,6 @@ def get_results():
     import ast      # abstract syntact trees
     import re       # regexes
     from collections import defaultdict
-    
     from datetime import datetime
     from dateutil import tz
     import dateutil.parser
@@ -467,7 +425,6 @@ def get_results():
                 #        and the use of '+'. Also, only quoting the subject line
                 #        because it sometimes has commas in it.
 
-                
                 print( camp["name"] +
                       ', ' + local_time(camp["created_date"])[0:10] +
                       ', ' + local_time(camp["created_date"])[11:16] +
@@ -505,7 +462,7 @@ def get_results():
     # Part II
     #
     """ We *used* to go looking for all the spear-phishing data"""
-    print("[OK]: We don't use spear-phishing anymore.") 
+    print("[OK]: We don't use spear-phishing anymore.")
 
 
     # Part III - now total everthing up...
@@ -543,7 +500,6 @@ def get_results():
     }
 
     return r
-
 
 
 def excelout_summary( csv_file, outdir):
@@ -627,7 +583,6 @@ def excelout_summary( csv_file, outdir):
     return
 
 
-
 def excelout_timeline( csv_file, outdir):
     """
     Produce a nicely readable XLSX from the CSV of a timeline
@@ -669,13 +624,13 @@ def excelout_timeline( csv_file, outdir):
 
     #   We can then pass these formats as an optional third parameter to the 
     #   worksheet.write() method, or optional fourth param to set_column:
-    worksheet.set_column(0, 0, 32, centered) 
-    worksheet.set_column(1, 1, 16, centered) 
-    worksheet.set_column(2, 2, 8, centered) 
-    worksheet.set_column(3, 3, 48, centered ) 
-    worksheet.set_column(4, 4, 20, centered)  
-    worksheet.set_column(5, 5, 20, wide)  
-    worksheet.set_column(6, 6, 60, wide)  
+    worksheet.set_column(0, 0, 32, centered)
+    worksheet.set_column(1, 1, 16, centered)
+    worksheet.set_column(2, 2, 8, centered)
+    worksheet.set_column(3, 3, 48, centered )
+    worksheet.set_column(4, 4, 20, centered)
+    worksheet.set_column(5, 5, 20, wide)
+    worksheet.set_column(6, 6, 60, wide)
     # worksheet.set_column(7, 7, 80, superwide)  # set column width
     # worksheet.set_column(8, 8, 80, superwide)  # set column width
 
