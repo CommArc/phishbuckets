@@ -60,13 +60,6 @@ def check_group(base_group):
         sys.exit(exit_msg)
 
 
-def group_name(job):
-    import subprocess
-    cmd = 'at -c ' + job + ' | tail -2| head -1| cut -f 2 -d" "'
-    base_name = str(subprocess.check_output(cmd, shell=True))
-    return base_name
-
-
 def delete_group(grp_id, grp_name):
     """Delete an group, by it's id."""
 
@@ -709,6 +702,7 @@ def excelout_timeline( csv_file, outdir):
     writer.save()
     writer.close()
     return
+
 
 def mailshots(base_group, start_date, phish_set, sched_name):
     """Schedule the 20 phishing mailshot tasks, but
