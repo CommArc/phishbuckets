@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
     pbcleanup
- 
-        Given a base group, it deletes alli associated
+
+        Given a base group, it deletes all associated
         sub-groups and campaigns.
 
         This is done simply by name matching - so assumes that
