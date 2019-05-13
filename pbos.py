@@ -142,3 +142,28 @@ def send_the_report(r, base_group, recips):
         os.remove(mail_out4)
     except FileNotFoundError:
         pass
+
+
+def check_date(start_date):
+    """Check that the date is valid."""
+    import datetime
+    import sys
+
+    if start_date == 'now':
+        print("[OK] Using 'now' - so mailouts will start very soon!")
+        return 'now'
+
+    else:
+        try:
+            start = datetime.datetime.strptime(start_date, '%d/%m/%Y')
+        except ValueError:
+            print("[Error] Date needs to be in dd/mm/YYYY format")
+            sys.exit()
+
+        if not (start.weekday() == 0):
+            print("[Error] The starting date must be a Monday")
+            sys.exit("[Error] Invalid starting date\n")
+
+        print("[OK] Starting date is a Monday...")
+        return start
+

@@ -10,7 +10,7 @@ import datetime
 import sys
 import time
 
-from pbcalc import check_date
+from pbos import check_date
 from pbconfig import (
     get_mailshot_time, get_phishes
 )

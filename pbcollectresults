@@ -3,13 +3,10 @@
 #    pbcollectresults - collect results of a 'phishing' engagement
 #
 """
-    Designed to be scheduled a few hours after the final 'phish' to
-    allow time for the targets to fall for it.
+    Can be run 'manually' at any time to generate an interum status
+    report - but normally run a few hours after the final 'phish'.
 
-    Can be run 'manually' at any time to generate an interum status report
-    but normally run a few hours after the final 'phish'.
-
-    Also possible to 'queue up' via a Linux 'at' job.
+    It's often handy to 'queue up' via a Linux 'at' job.
 
 """
 
