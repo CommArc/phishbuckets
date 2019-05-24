@@ -662,7 +662,7 @@ def mailshots(base_group, start_date, phish_set, sched_name):
 
     for shot in range(0, 20):
         if start_date == 'now':
-            delay = shot + 5
+            delay = shot + 1
             mailshot_date = datetime.datetime.now()
             shot_td = mailshot_date + datetime.timedelta(minutes=delay)
             shot_time = shot_td.strftime('%H') + ":" + shot_td.strftime('%M')
