@@ -459,7 +459,7 @@ def get_results():
     # Part II
     #
     """ We *used* to go looking for all the spear-phishing data"""
-    print("[OK]: We don't use spear-phishing anymore.")
+    # print("[OK]: We don't use spear-phishing anymore.")
 
 
     # Part III - now total everthing up...
@@ -662,8 +662,7 @@ def mailshots(base_group, start_date, phish_set, sched_name):
 
     for shot in range(0, 20):
         if start_date == 'now':
-            # Send out one per minute, after a one minute delay...
-            delay = shot + 1
+            delay = shot + 5
             mailshot_date = datetime.datetime.now()
             shot_td = mailshot_date + datetime.timedelta(minutes=delay)
             shot_time = shot_td.strftime('%H') + ":" + shot_td.strftime('%M')
@@ -680,8 +679,9 @@ def mailshots(base_group, start_date, phish_set, sched_name):
         # Now create the campaign via the API, with scheduling controlled by
         # the 'launch_date" attribute...
 
-        launch_date = shot_time + mailshot_date.strftime('%d/%m/%Y')
-        nz_launch_date = mailshot_date.strftime('%Y-%m-%d') + 'T' + shot_time + ":00+13:00"
+        # Making sure we handle time correctly...
+        UTC_offset = pytz.timezone('Pacific/Auckland').localize(mailshot_date).strftime('%z')
+        nz_launch_date = mailshot_date.strftime('%Y-%m-%d') + 'T' + shot_time + UTC_offset
         UTC_launch_date = UTC_time(nz_launch_date)
 
         o_data = {"name": 'AUTO-' + base_group + '-' + str(shot),
